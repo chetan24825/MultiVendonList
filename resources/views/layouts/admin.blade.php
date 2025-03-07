@@ -4,7 +4,6 @@
 <head>
     @include('site.inc.style')
 </head>
-
 <body>
     @include('site.inc.header')
     {{ $slot }}
