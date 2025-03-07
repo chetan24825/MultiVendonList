@@ -6,7 +6,6 @@
 </head>
 
 <body>
-
     @include('site.inc.header')
     {{ $slot }}
     @include('site.inc.footer')
