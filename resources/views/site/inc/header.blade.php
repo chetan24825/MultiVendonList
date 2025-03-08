@@ -70,57 +70,51 @@
         </div>
     </div>
 
-        <div class="main-menu">
-            <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-                <div class="container">
-                    <a href="#" class="brand-link">
-                        @if (get_setting('web_logo'))
-                            <img loading="lazy" title="Logo" role="img" alt="Company Logo" style="height: 45px;"
-                                src="{{ uploaded_asset(get_setting('web_logo')) }}" class="img-fluid">
-                        @else
-                            {{ get_setting('company_name') }}
-                        @endif
+    <div class="main-menu">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+            <div class="container">
+                <a href="#" class="brand-link">
+                    @if (get_setting('web_logo'))
+                        <img loading="lazy" title="Logo" role="img" alt="Company Logo" style="height: 45px;"
+                            src="{{ uploaded_asset(get_setting('web_logo')) }}" class="img-fluid">
+                    @else
+                        {{ get_setting('company_name') }}
+                    @endif
 
-                    </a>
+                </a>
 
 
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link {{ Route::is('site.index') ? 'active' : '' }}" aria-current="page"
-                                    href="#">Home</a>
-                            </li>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link {{ Route::is('site.index') ? 'active' : '' }}" aria-current="page"
+                                href="#">Home</a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link {{ Route::is('products') ? 'active' : '' }}"
-                                    href="#">Products</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Route::is('products') ? 'active' : '' }}" href="#">Products</a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link {{ Route::is('coupens') ? 'active' : '' }}"
-                                    href="#">Coupons</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Route::is('coupens') ? 'active' : '' }}" href="#">Coupons</a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link {{ Route::is('stores') ? 'active' : '' }}"
-                                    href="#">Shops</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Route::is('stores') ? 'active' : '' }}" href="#">Shops</a>
+                        </li>
 
 
 
 
-                        </ul>
+                    </ul>
 
 
-                        {{-- @if (Auth::guard('admin')->check() ||
-                                Auth::guard('web')->check() ||
-                                Auth::guard('agent')->check() ||
-                                Auth::guard('advertiser')->check())
+                    {{-- @if (Auth::guard('admin')->check() || Auth::guard('web')->check() || Auth::guard('agent')->check() || Auth::guard('advertiser')->check())
                             <div class="dropdown">
                                 <button class="btn dropdown-toggle " type="button" id="dropdownMenuButton1"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -162,20 +156,21 @@
 
 
 
-                        <ul class="header-right">
-                            @guest('web')
-                                <li><a wire:navigate href="{{ route('login') }}" class="login-btn">User Login</a></li>
-                                <li><a wire:navigate href="{{ route('register') }}" class="register-btn">Register<i
-                                            class="las la-arrow-right"></i></a>
-                                </li>
-                            @endguest
+                    <ul class="header-right">
+                        @guest('web')
+                            <li><a wire:navigate href="{{ route('advertiser.login') }}" class="login-btn">User Login</a>
+                            </li>
+                            <li><a wire:navigate href="{{ route('advertiser.register') }}" class="register-btn">Register<i
+                                        class="las la-arrow-right"></i></a>
+                            </li>
+                        @endguest
 
-                        </ul>
+                    </ul>
 
 
-                    </div>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
+    </div>
 
 </header>

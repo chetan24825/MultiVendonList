@@ -1,18 +1,18 @@
 <div>
-    @section('meta_title'){{ config('app.name') }} User Register @stop
-    @section('meta_keywords'){{ config('app.name') }} User Register @stop
-    @section('meta_description'){{ config('app.name') }} User Register @stop
+    @section('meta_title'){{ config('app.name') }} Advertiser Register @stop
+    @section('meta_keywords'){{ config('app.name') }} Advertiser Register @stop
+    @section('meta_description'){{ config('app.name') }} Advertiser Register @stop
     <div class="breadcumb">
         <div class="container">
             <div class="row">
                 <ul>
                     <li><a href="#">Home</a></li>
+                    <li><a href="{{ route('advertiser.register') }}">Advertiser</a></li>
                     <li><a href="{{ url()->current() }}">Register</a></li>
                 </ul>
             </div>
         </div>
     </div>
-
 
 
 
@@ -38,7 +38,7 @@
 
                 <div class="col-md-6">
                     <div class="register">
-                        <h4>{{ !$otpSent ? 'User Registration' : 'Account Verification of User' }}</h4>
+                        <h4>{{ !$otpSent ? 'Advertiser Registration' : 'Account Verification of Advertiser' }}</h4>
                         <p></p>
                         <div class="billing-box">
                             <form method="post" wire:submit.prevent="{{ !$otpSent ? 'otpsend' : 'register' }}">
@@ -53,29 +53,20 @@
                                                 @enderror
                                             @endif
 
-                                            <input type="text" wire:model="name"
-                                                class="{{ !$otpSent ? 'd-block' : 'd-none' }}"
-                                                placeholder="Enter your Name ">
-                                            @error('name')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-
                                             <input type="text" wire:model="phone"
                                                 class="{{ !$otpSent ? 'd-block' : 'd-none' }}"
                                                 placeholder="Enter your Phone Number">
                                             @error('phone')
                                                 <span class="invalid-feedback">{{ $message }}</span>
                                             @enderror
-
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <button class="w-100">{{ !$otpSent ? 'Send OTP' : 'SUBMIT' }}</button>
                                 </div>
                                 <br>
-                                <p>Already have an account? <a href="{{ route('login') }}">Log in</a> </p>
+                                <p>Already have an account? <a href="{{ route('advertiser.login') }}">Log in</a> </p>
                             </form>
                         </div>
 

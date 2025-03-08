@@ -1,10 +1,11 @@
 <?php
 
 use Otpless\OTPLessAuth;
+use App\Models\Inc\Upload;
+use Illuminate\Support\Str;
+use App\Models\Inc\BusinessSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Inc\Upload;
-use App\Models\Inc\BusinessSetting;
 
 
 
@@ -158,5 +159,13 @@ if (!function_exists('uploaded_asset')) {
             return my_asset($asset->file_name);
         }
         return null;
+    }
+}
+
+if (!function_exists('randompassword')) {
+    function randompassword($number = 5)
+    {
+        $randomNumber = str_pad(mt_rand(0, pow(10, $number) - 1), $number, '0', STR_PAD_LEFT);
+        return $randomNumber;
     }
 }

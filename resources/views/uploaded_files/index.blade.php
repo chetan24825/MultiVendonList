@@ -60,7 +60,7 @@
                                             placeholder="Search your files" value="{{ $search }}">
                                     </div>
                                     <div class="col-auto">
-                                        <button type="submit" class="btn btn-primary p-2 text-white">Search</button>
+                                        <button type="submit" class="btn btn-dark p-2">Search</button>
                                     </div>
                                 </div>
                             </form>

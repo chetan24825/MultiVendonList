@@ -1,13 +1,6 @@
-
-
-<!-- ========== Left Sidebar Start ========== -->
 <div class="sidebar-left">
-
     <div data-simplebar class="h-100">
-
-        <!--- Sidebar-menu -->
         <div id="sidebar-menu">
-
             <div class="card-body pt-0">
                 <div class="row align-items-end">
                     <div class="col-sm-4">
@@ -25,14 +18,14 @@
             <ul class="left-menu list-unstyled" id="side-menu">
 
                 <li>
-                    <a href="{{ route('user.profile') }}">
+                    <a href="#">
                         <i class="fa fa-shapes"></i>
                         <span>Profile</span>
                     </a>
 
                 </li>
                 <li>
-                    <a href="{{ route('user.order') }}">
+                    <a href="#">
                         <i class="fa fa-palette"></i>
                         <span> My Orders</span>
                     </a>
@@ -40,7 +33,7 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('user.visitingcards') }}">
+                    <a href="#">
                         <i class="fa fa-heart"></i>
                         <span>My Favourites</span>
                     </a>

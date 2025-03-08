@@ -19,10 +19,13 @@ class UserRegister extends Component
     public $phone;
     public $store;
 
+    public $name;
+
 
     function otpsend()
     {
         $this->validate([
+            'name' => 'required|string|max:255',
             'phone' => [
                 'required',
                 'unique:users,phone',
@@ -43,48 +46,22 @@ class UserRegister extends Component
     public function register()
     {
         $this->validate([
-            // 'phone' => [
-            //     'required',
-            //     'unique:users,phone',
-            //     'regex:/^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/',
-            // ],
             'otp' => 'required',
         ]);
         $response = verify_and_login_user($this->phone, $this->otp, $this->otp_orderId);
         if (isset($response['success']) && $response['success'] === true && $response['isOTPVerified'] === true) {
+            $password = randompassword(5);
+
             $user = User::create([
                 'phone' => $this->phone,
+                'password' => bcrypt($password),
             ]);
             Auth::guard('web')->login($user);
-            if (session()->has('redirect_favorite_store_id')) {
-                $storeId = session('redirect_favorite_store_id');
-                $store = Store::find($storeId);
-                if ($store) {
-                    $this->addToFavoritesForRegisteredUser($store);
-                }
-
-                session()->forget('redirect_favorite_store_id');}
-
             session()->flash('success', 'Register Successfully ');
-            return redirect()->route('user.profile');
+            return redirect()->route('user.dashboard');
         }
     }
-    public function addToFavoritesForRegisteredUser($store)
-    {
-        $attributes = [
-            'user_id' => Auth::id(),
-            'guard' => current_guard(),
-            'seller_id' =>$store->user_id,
-            'seller_guard' => $store->guard,
-            'store_id' => $store->id,
-        ];
 
-        $favourite = Favourite::where($attributes)->first();
-
-        if (!$favourite) {
-            Favourite::create($attributes); 
-        }
-    }
 
     public function render()
     {

@@ -10,7 +10,7 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="{{route('admin.companies')}}">
                         <i class="fa fa-th-list"></i>
                         <span>Companies </span>
                     </a>
@@ -18,7 +18,7 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="{{route('admin.individual')}}" >
                         <i class="fa fa-th-list"></i>
                         <span>Individuals </span>
                     </a>
@@ -34,7 +34,7 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="{{ route('admin.technology') }}" class="">
                         <i class="fa fa-th-list"></i>
                         <span>Technology </span>
                     </a>

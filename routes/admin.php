@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\Admin\AdminLogin;
 use App\Http\Controllers\AizUploadController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\IndividualController;
+use App\Http\Controllers\Admin\TechnologyController;
 
 
 Route::get('/', AdminLogin::class)->name('login')->middleware('guest');
@@ -11,6 +14,20 @@ Route::get('/', AdminLogin::class)->name('login')->middleware('guest');
 
 Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     Route::get('/dashboard', [AdminController::class, 'toAdminDashboard'])->name('dashboard');
+
+    //Technology
+    Route::get('/technology', [TechnologyController::class, 'toAdminTechnology'])->name('technology');
+    Route::post('/technology', [TechnologyController::class, 'toAdminTechnologyStore']);
+    Route::delete('/technology/{id}', [TechnologyController::class, 'toAdminTechnologyDelete'])->name('technology.delete');
+    Route::post('/technology/update', [TechnologyController::class, 'toAdminTechnologyUpdate'])->name('technology.update');
+
+    // Companies
+    Route::get('/companies', [CompanyController::class, 'toAdminCompanies'])->name('companies');
+
+
+    // Individual
+    Route::get('/individual', [IndividualController::class, 'toAdminIndividual'])->name('individual');
+
 
     // AizUpload
     Route::post('/aiz-uploader', [AizUploadController::class, 'show_uploader']);
