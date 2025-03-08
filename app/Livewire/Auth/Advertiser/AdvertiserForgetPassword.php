@@ -3,7 +3,7 @@
 namespace App\Livewire\Auth\Advertiser;
 
 use Livewire\Component;
-use App\Models\Role\Advertiser;
+use App\Models\Advertiser;
 use Illuminate\Support\Facades\Auth;
 
 class AdvertiserForgetPassword extends Component

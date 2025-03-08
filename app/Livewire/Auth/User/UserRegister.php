@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Auth\User;
 
-use App\Models\Inc\Favourite;
-use App\Models\Inc\Store;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;

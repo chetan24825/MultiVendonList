@@ -1,13 +1,13 @@
 <div>
-    @section('meta_title'){{ config('app.name') }} Advertiser Login @stop
-    @section('meta_keywords'){{ config('app.name') }} Advertiser Login @stop
-    @section('meta_description'){{ config('app.name') }} Advertiser Login @stop
+    @section('meta_title'){{ config('app.name') }} Customer Login @stop
+    @section('meta_keywords'){{ config('app.name') }} Customer Login @stop
+    @section('meta_description'){{ config('app.name') }} Customer Login @stop
     <div class="breadcumb">
         <div class="container">
             <div class="row">
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="{{ route('advertiser.login') }}">Advertiser</a></li>
+                    <li><a href="{{ route('advertiser.login') }}">Customer</a></li>
                     <li><a href="{{ url()->current() }}">login</a></li>
                 </ul>
             </div>
@@ -29,7 +29,7 @@
                 @endif
                 <div class="col-md-6">
                     <div class="register">
-                        <h4 class="mb-3">Advertiser Login</h4>
+                        <h4 class="mb-3">Customer Login</h4>
 
 
                         <div class="billing-box">

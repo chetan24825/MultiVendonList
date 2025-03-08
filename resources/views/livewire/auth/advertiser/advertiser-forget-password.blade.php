@@ -1,13 +1,13 @@
 <div>
-    @section('meta_title'){{ config('app.name') }} Advertiser Forgot Password @stop
-    @section('meta_keywords'){{ config('app.name') }} Advertiser Forgot Password @stop
-    @section('meta_description'){{ config('app.name') }} Advertiser Forgot Password @stop
+    @section('meta_title'){{ config('app.name') }} Customer Forgot Password @stop
+    @section('meta_keywords'){{ config('app.name') }} Customer Forgot Password @stop
+    @section('meta_description'){{ config('app.name') }} Customer Forgot Password @stop
     <div class="breadcumb">
         <div class="container">
             <div class="row">
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="{{ route('advertiser.login') }}">Advertiser</a></li>
+                    <li><a href="{{ route('advertiser.login') }}">Customer</a></li>
                     <li><a href="{{ url()->current() }}">Forgot Epin</a></li>
                 </ul>
             </div>
