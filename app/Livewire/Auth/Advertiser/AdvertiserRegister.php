@@ -48,13 +48,16 @@ class AdvertiserRegister extends Component
         $response = verify_and_login_user($this->phone, $this->otp, $this->otp_orderId);
         if (isset($response['success']) && $response['success'] === true && $response['isOTPVerified'] === true) {
             $user = Advertiser::create([
+                'name' => $this->name,
                 'phone' => $this->phone,
             ]);
-            Auth::guard('advertiser')->login($user);
+            // Auth::guard('advertiser')->login($user);
 
-            session()->flash('success', 'Register Successfully ');
 
-            return redirect()->route('advertiser.profile');
+
+            // session()->flash('success', 'Register Successfully ');
+
+            return redirect()->route('advertiser.verification', $user->id);
         }
     }
     public function render()

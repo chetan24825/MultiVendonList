@@ -45,6 +45,11 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+
+        'advertiser' => [
+            'driver' => 'session',
+            'provider' => 'advertisers',
+        ],
     ],
 
     /*
@@ -73,6 +78,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\Admin::class),
+        ],
+
+        'advertisers' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Advertiser::class),
         ],
 
         // 'users' => [

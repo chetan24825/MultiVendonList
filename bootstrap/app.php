@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(RemoveWwwMiddleware::class);
         $middleware->alias([
             'user.active' => \App\Http\Middleware\CheckUserStatus::class,
+            'profile.registration' => \App\Http\Middleware\VerificationCustomer::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

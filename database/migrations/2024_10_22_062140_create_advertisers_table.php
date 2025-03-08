@@ -14,6 +14,19 @@ return new class extends Migration
         Schema::create('advertisers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('country')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
+
+            $table->string('company_name')->nullable();
+            $table->string('phone2')->nullable();
+            $table->string('technologies')->nullable();
+            $table->string('type')->nullable()->comment('Individual: 1, Company: 2');
+            $table->longText('address')->nullable();
+
             $table->string('email')->unique()->nullable();
             $table->string('avatar')->nullable();
             $table->string('phone')->nullable();
