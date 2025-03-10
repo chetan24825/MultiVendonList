@@ -10,7 +10,7 @@
                 </li>
 
                 <li>
-                    <a href="{{route('admin.companies')}}">
+                    <a href="{{ route('admin.companies') }}">
                         <i class="fa fa-th-list"></i>
                         <span>Companies </span>
                     </a>
@@ -18,7 +18,7 @@
                 </li>
 
                 <li>
-                    <a href="{{route('admin.individual')}}" >
+                    <a href="{{ route('admin.individual') }}">
                         <i class="fa fa-th-list"></i>
                         <span>Individuals </span>
                     </a>
@@ -133,22 +133,29 @@
                 </li>
 
 
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow">
-                        <i class="fas fa-chart-area"></i>
+                <li
+                    class="{{ Route::is('admin.custom-page') || Route::is('admin.custom-page-edit') ? 'mm-active' : '' }}">
+                    <a href="javascript: void(0);"
+                        class="has-arrow {{ Route::is('admin.custom-page') || Route::is('admin.custom-page-edit') ? 'mm-active' : '' }}">
+                        <i class="fa fa-cog"></i>
                         <span>Settings</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="#"><i class="fas fa-chart-area align-middle"></i>
-                                Notes</a></li>
+                        <li><a href="{{ route('admin.settings') }}"><i
+                                    class="mdi mdi-checkbox-blank-circle align-middle"></i> General
+                            </a></li>
+                        <li
+                            class="{{ Route::is('admin.custom-page') || Route::is('admin.custom-page-edit') ? 'mm-active' : '' }}">
+                            <a href="{{ route('admin.custom-page-all') }}"><i
+                                    class="mdi mdi-checkbox-blank-circle align-middle {{ Route::is('admin.custom-page') || Route::is('admin.custom-page-edit') ? 'active' : '' }} "></i>
+                                Custom Pages
+                            </a>
+                        </li>
 
-                        <li><a href="#"><i class="fas fa-chart-area align-middle"></i>
-                                Settings</a></li>
+
 
                     </ul>
                 </li>
-
-
 
                 <li>
                     <a href="{{ route('logout') }}" class="">

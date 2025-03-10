@@ -2,8 +2,8 @@
 
 use Otpless\OTPLessAuth;
 use App\Models\Inc\Upload;
-use Illuminate\Support\Str;
 use App\Models\Inc\BusinessSetting;
+use App\Models\Inc\Technology;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -167,5 +167,15 @@ if (!function_exists('randompassword')) {
     {
         $randomNumber = str_pad(mt_rand(0, pow(10, $number) - 1), $number, '0', STR_PAD_LEFT);
         return $randomNumber;
+    }
+}
+
+
+if (!function_exists('technology_name')) {
+    function technology_name($data)
+    {
+        $technology = Technology::whereIn('id', json_decode($data, true))->pluck('name');
+        $technologyNames = $technology->implode(', ');
+        return $technologyNames;
     }
 }

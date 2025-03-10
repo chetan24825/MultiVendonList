@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AizUploadController;
 use App\Livewire\Auth\Advertiser\AdvertiserLogin;
+use App\Http\Controllers\Basic\LocationController;
 use App\Livewire\Auth\Advertiser\AdvertiserRegister;
 use App\Livewire\Auth\Verification\CustomerVerification;
 use App\Http\Controllers\Advertiser\AdvertiserController;
@@ -26,6 +27,14 @@ Route::group(['middleware' => ['auth:advertiser', 'user.active', 'profile.regist
     //Profile
     Route::get('/profile', [AdvertiserController::class, 'toAdvertiserprofile'])->name('profile');
     Route::post('/profile', [AdvertiserController::class, 'toAdvertiserprofileUpdate']);
+    Route::post('/profile/change-password', [AdvertiserController::class, 'toAdvertiserprofileChangePassword'])->name('password');
+
+
+
+    //AJax
+    Route::get('/products/cities', [LocationController::class, 'getCitiesByState'])->name('getCitiesByState');
+
+
 
     // AizUpload
     Route::post('/aiz-uploader', [AizUploadController::class, 'show_uploader']);

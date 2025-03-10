@@ -25,8 +25,26 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     Route::get('/companies', [CompanyController::class, 'toAdminCompanies'])->name('companies');
 
 
+
     // Individual
     Route::get('/individual', [IndividualController::class, 'toAdminIndividual'])->name('individual');
+
+
+    //Globaly
+    Route::get('customer/view/{id}', [AdminController::class, 'toAdminView'])->name('view');
+    Route::post('/companies/{store}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('companies.toggleStatus');
+    // GetSettings
+    Route::get('/settings', [AdminController::class, 'toSettings'])->name('settings');
+    Route::post('/settings', [AdminController::class, 'toSettingUpload']);
+
+    // Custom Pages
+    Route::get('/custom-pages', [AdminController::class, 'toCustom'])->name('custom-page-all');
+    Route::get('/custom-pages/create', [AdminController::class, 'toCustomPage'])->name('custom-page');
+    Route::post('/custom-pages/create', [AdminController::class, 'toCustomPageSave']);
+    Route::get('/custom-pages/update/{id}', [AdminController::class, 'toCustomPageEdit'])->name('custom-page-edit');
+    Route::put('/custom-pages/update/{id}', [AdminController::class, 'toCustomPageUpdate'])->name('custom-page-update');
+    Route::delete('custom-pages/delete/{id}', [AdminController::class, 'toCustomPageDelete'])->name('custom-page.delete');
+
 
 
     // AizUpload

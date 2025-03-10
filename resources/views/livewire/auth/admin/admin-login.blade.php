@@ -43,7 +43,7 @@
 
                                         <div class="form-group position-relative">
                                             <input type="password" wire:model="user_pin" id="userPinInput"
-                                                class="form-control" placeholder="Enter your User Pin">
+                                                class="form-control" placeholder="Enter your Password">
                                             <span
                                                 class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer"
                                                 onclick="togglePasswordVisibility()">

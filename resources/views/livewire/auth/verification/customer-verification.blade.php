@@ -136,7 +136,7 @@
                                                 @enderror
                                             </div>
                                             <div class="col-md-6">
-                                                <select wire:model.defer="state" wire:change="loadCities"
+                                                <select id="select2-1" wire:model.defer="state" wire:change="loadCities"
                                                     class="form-control">
                                                     <option value="">Select State</option>
                                                     @foreach ($allState as $stateOption)
@@ -191,3 +191,12 @@
     </div>
 
 </div>
+
+@push('site-styles')
+    <link href="{{ asset('panel/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css">
+@endpush
+
+@push('site-scripts')
+<script src="{{ asset('panel/js/pages/form-select2.init.js') }}"></script>
+<script src="{{ asset('panel/libs/select2/js/select2.min.js') }}"></script>
+@endpush

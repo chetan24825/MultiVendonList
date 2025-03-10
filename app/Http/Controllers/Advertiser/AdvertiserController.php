@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Advertiser;
 
 use Illuminate\Http\Request;
+use App\Models\Location\City;
+use App\Models\Location\State;
 use App\Http\Controllers\Controller;
+use App\Models\Inc\Technology;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,29 +25,67 @@ class AdvertiserController extends Controller
 
     function toAdvertiserprofile()
     {
-        return view('advertisers.form.profile');
+        $states = State::get();
+        $cities = City::where('id', Auth::user()->city)->first();
+        $technologies = Technology::get();
+        return view('advertisers.form.profile', compact('states', 'cities', 'technologies'));
     }
 
-    function toAdvertiserprofileUpdate(Request $request)
+    public function toAdvertiserprofileUpdate(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:advertisers,email,' . Auth::id(),
-            'phone' => 'required|numeric|digits:10',
-            'phone_2' => 'nullable|numeric|digits:10',
-            'avatar' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:255',
-            'user_pin' => 'required|string|min:6',
-            // 'agent_code' => 'nullable|exists:agents,agent_code',
+            'first_name'   => 'nullable|string|max:50',
+            'last_name'    => 'nullable|string|max:50',
+            'company_name' => 'nullable|string|max:100',
+            'email'        => 'nullable|email|max:100',
+            'phone'        => 'required|digits:10',
+            'phone_2'      => 'nullable|digits:10',
+            'country'      => 'nullable|string|max:50',
+            'state'        => 'nullable|exists:states,id',
+            'city'         => 'nullable|exists:cities,id',
+            'avatar'       => 'nullable|string',
+            'address'      => 'nullable|string|max:255',
         ]);
 
-        if (Auth::user()->agent_code || $request->agent_code != null) {
-            $validatedData['agent_code_status'] = 1;
+        // Get authenticated user
+        $user = Auth::user();
+
+        // Check user type and update fields accordingly
+        if ($user->type == 1) { // Individual
+            $user->first_name = $validatedData['first_name'];
+            $user->last_name = $validatedData['last_name'];
+        } elseif ($user->type == 2) { // Company
+            $user->company_name = $validatedData['company_name'];
+            $user->phone2 = $validatedData['phone_2'];
         }
-        $validatedData['user_pin'] = $request->user_pin;
-        $validatedData['password'] = Hash::make($request->user_pin);
-        if (auth()->user()->update($validatedData)) {
-            return redirect()->back()->with('success', 'Updated successfully.');
-        }
+
+        // Update common fields
+        $user->email = $validatedData['email'] ?? $user->email;
+        $user->phone = $validatedData['phone'];
+        $user->country = $validatedData['country'] ?? $user->country;
+        $user->state = $validatedData['state'] ?? $user->state;
+        $user->city = $validatedData['city'] ?? $user->city;
+        $user->avatar = $validatedData['avatar'] ?? $user->avatar;
+        $user->address = $validatedData['address'] ?? $user->address;
+        $user->technologies = $request['technologies'] ?? $user->technologies;
+
+
+        // Save the updated user data
+        $user->save();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Profile updated successfully.');
+    }
+
+    public function toAdvertiserprofileChangePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+        // Get authenticated user
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+        return redirect()->back()->with('success', 'Password updated successfully.');
     }
 }
