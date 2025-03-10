@@ -52,6 +52,7 @@ class UserRegister extends Component
 
             $user = User::create([
                 'phone' => $this->phone,
+                'name' => $this->name,
                 'password' => bcrypt($password),
             ]);
             Auth::guard('web')->login($user);

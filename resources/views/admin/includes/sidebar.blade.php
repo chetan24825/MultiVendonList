@@ -27,10 +27,14 @@
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow ">
-                        <i class="fa fa-th-list"></i>
-                        <span>Users </span>
+                        <i class="fa fa-user-cog"></i>
+                        <span>Users</span>
                     </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('admin.users') }}"><i
+                                    class="mdi mdi-checkbox-blank-circle align-middle"></i>List of Users</a></li>
 
+                    </ul>
                 </li>
 
                 <li>

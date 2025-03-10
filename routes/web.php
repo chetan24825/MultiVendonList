@@ -30,9 +30,14 @@ Route::get('/', function () {
 
 
 Route::group(['middleware' => ['auth:web', 'user.active'], 'prefix' => 'user', 'as' => 'user.'], function () {
+    //Dashboard
     Route::get('/dashboard', [UserController::class, 'toUserDashboard'])->name('dashboard');
+
+    //Profile
     Route::get('profile', [UserController::class, 'UserProfile'])->name('profile');
     Route::put('profile', [UserController::class, 'UserProfileUpdate'])->name('profileupdate');
+    Route::post('/change-password', [UserController::class, 'toChangePassword'])->name('password');
+
     Route::post('epin-generate', [UserController::class, 'toepingenerate'])->name('epin.generate');
     Route::get('order', [UserController::class, 'Order'])->name('order');
     Route::get('favourites', [UserController::class, 'VisitingCards'])->name('visitingcards');

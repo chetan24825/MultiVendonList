@@ -18,12 +18,12 @@
             <ul class="left-menu list-unstyled" id="side-menu">
 
                 <li>
-                    <a href="#">
+                    <a href="{{ route('user.profile') }}">
                         <i class="fa fa-shapes"></i>
                         <span>Profile</span>
                     </a>
-
                 </li>
+
                 <li>
                     <a href="#">
                         <i class="fa fa-palette"></i>

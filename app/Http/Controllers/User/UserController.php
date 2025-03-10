@@ -29,17 +29,7 @@ class UserController extends Controller
                 'full_name' => 'nullable',
                 'email' => 'nullable|email',
                 'phone' => 'required|digits:10|unique:users,phone,' . Auth::id(), // Ignore current user ID for phone uniqueness
-                'address' => 'nullable',
-                'city' => 'nullable',
-                'state' => 'nullable',
-                'country' => 'nullable',
-                'image' => 'nullable',
-                'user_pin' => 'required|min:6|max:6',
-            ],
-            [
-                'user_pin.required' => 'The PIN is required. Please provide a 6-digit PIN.',
-                'user_pin.min' => 'The PIN must be exactly 6 digits.',
-                'user_pin.max' => 'The PIN must not exceed 6 digits.',
+
             ]
         );
 
@@ -47,15 +37,21 @@ class UserController extends Controller
         $user->name = $request->input('full_name');
         $user->email = $request->input('email');
         $user->phone = $request->input('phone');
-        $user->phone_2 = $request->input('phone_2');
-        $user->address = $request->input('address');
-        $user->city = $request->input('city');
-        $user->state = $request->input('state');
-        $user->avatar = $request->input('image');
-        $user->user_pin = $request->user_pin;
-        $user->password = Hash::make($request->user_pin);
         $user->save();
         return redirect()->route('user.profile')->with('success', 'Profile updated successfully.');
+    }
+
+
+    function toChangePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+        // Get authenticated user
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+        return redirect()->back()->with('success', 'Password updated successfully.');
     }
 
     public function Order()

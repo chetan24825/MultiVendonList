@@ -5,6 +5,7 @@ use App\Livewire\Auth\Admin\AdminLogin;
 use App\Http\Controllers\AizUploadController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\IndividualController;
 use App\Http\Controllers\Admin\TechnologyController;
 
@@ -25,6 +26,11 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     Route::get('/companies', [CompanyController::class, 'toAdminCompanies'])->name('companies');
 
 
+    // Users
+    Route::get('/users', [UserAdminController::class, 'tousers'])->name('users');
+    Route::put('/users/{id}', [UserAdminController::class, 'UserUpdate'])->name('users.update');
+    Route::delete('user-delete/{id}', [UserAdminController::class, 'UserDelete'])->name('user-delete');
+    Route::get('/user/view/{slug}', [UserAdminController::class, 'touserview'])->name('user.view');
 
     // Individual
     Route::get('/individual', [IndividualController::class, 'toAdminIndividual'])->name('individual');
@@ -33,6 +39,8 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     //Globaly
     Route::get('customer/view/{id}', [AdminController::class, 'toAdminView'])->name('view');
     Route::post('/companies/{store}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('companies.toggleStatus');
+
+
     // GetSettings
     Route::get('/settings', [AdminController::class, 'toSettings'])->name('settings');
     Route::post('/settings', [AdminController::class, 'toSettingUpload']);

@@ -17,39 +17,8 @@
                                 </ul>
                             </div>
                         @endif
-                        @if (!Auth::user()->user_pin || session('forget'))
-                            <div class="col-xl-12">
-                                <div class="card">
-                                    <div class="card-header card-header-bordered justify-content-between">
-                                        <h3 class="card-title">Epin </h3>
 
-                                    </div>
-                                    <div class="card-body">
-                                        <form class="row g-3" action="{{ route('user.epin.generate') }}" method="post"
-                                            enctype="multipart/form-data">
-                                            @csrf
-
-                                            <div class="col-md-12">
-                                                <label for="name" class="form-label">Enter Pin (Min 6 Character)
-                                                    <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="user_pin" maxlength="6"
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6)"
-                                                     value="{{ old('user_pin') }}" />
-                                                @error('user_pin')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-
-                                            <div class="col-md-12">
-                                                <button type="submit" class="btn btn-primary text-white">Sumbit</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                        <div class="col-xl-12">
+                        <div class="col-xl-8">
                             <div class="card">
 
                                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -87,36 +56,7 @@
                                                     <p class="text-muted mb-0">{{ Auth::user()->email }}</p>
                                                 </div>
                                             </div>
-                                            <hr>
-                                            <div class="row mb-3">
-                                                <div class="col-sm-4">
-                                                    <p class="mb-0">Phone No..</p>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <p class="text-muted mb-0">{{ Auth::user()->phone_2 }}</p>
-                                                </div>
-                                            </div>
 
-                                            <hr>
-
-                                            <div class="row mb-3">
-                                                <div class="col-sm-4">
-                                                    <p class="mb-0">State</p>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <p class="text-muted mb-0">{{ Auth::user()->state }}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row mb-3">
-                                                <div class="col-sm-4">
-                                                    <p class="mb-0">Address</p>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <p class="text-muted mb-0">{{ Auth::user()->address }}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
 
 
                                         </div>
@@ -129,31 +69,6 @@
                                                     <p class="text-muted mb-0">{{ Auth::user()->phone }}</p>
                                                 </div>
                                             </div>
-
-
-
-                                            <hr>
-                                            <div class="row mb-3">
-                                                <div class="col-sm-4">
-                                                    <p class="mb-0">City</p>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <p class="text-muted mb-0">{{ Auth::user()->city }}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
-
-                                            <div class="row mb-3">
-                                                <div class="col-sm-4">
-                                                    <p class="mb-0">Pin</p>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <p class="text-muted mb-0">
-                                                        {{ Str::mask(Auth::user()->user_pin, '*', 0, 3) }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <hr>
                                         </div>
                                     </div>
                                 </div>
@@ -229,61 +144,6 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <label for="phone_2" class="form-label">Mobile</label>
-                                                            <input type="text" class="form-control" id="phone_2"
-                                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
-                                                                maxlength="10" name="phone_2"
-                                                                value="{{ $profile->phone_2 }}">
-                                                            @error('phone_2')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <label for="user_pin" class="form-label">Pin (Min 6 characters)<span class="text-danger">*</span> </label>
-                                                            <input type="text" class="form-control" id="user_pin"
-                                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6)"
-                                                                maxlength="6"  name="user_pin"
-                                                                value="{{ $profile->user_pin }}">
-                                                            @error('user_pin')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-
-
-                                                        <div class="col-md-6">
-                                                            <label for="state" class="form-label">State</label>
-                                                            <input type="text" class="form-control" id="state"
-                                                                name="state" value="{{ $profile->state }}">
-                                                            @error('state')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label for="city" class="form-label">City</label>
-                                                            <input type="text" class="form-control" id="city"
-                                                                name="city" value="{{ $profile->city }}">
-                                                            @error('city')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row mb-3">
-
-                                                        <div class="col-md-12">
-                                                            <label for="address" class="form-label">Address</label>
-
-                                                            <textarea name="address" class="form-control" cols="5" rows="5">{{ $profile->address }}</textarea>
-                                                            @error('address')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
 
 
 
@@ -296,6 +156,44 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header card-header-bordered">
+                                    <h3 class="card-title">
+                                        {{ Auth::user()->password == null ? 'Set Password' : 'Change Password' }}
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+
+
+
+                                    <form class="custom-validation" action="{{ route('user.password') }}"
+                                        method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            {{-- Common Fields --}}
+                                            <div class="col-md-12 mt-2">
+                                                <label class="form-label">Password</label>
+                                                <input type="password" class="form-control" name="password"
+                                                    value="" />
+                                                @error('password')
+                                                    <span class="text-danger"><strong>{{ ucwords($message) }}</strong></span>
+                                                @enderror
+                                            </div>
+
+
+                                            {{-- Submit Button --}}
+                                            <div class="col-md-12 text-center mt-4">
+                                                <button type="submit"
+                                                    class="btn btn-success">{{ Auth::user()->password == null ? 'Set Password' : 'Change Password' }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
