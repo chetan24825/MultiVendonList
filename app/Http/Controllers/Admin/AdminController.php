@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Advertiser;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Models\Inc\CustomPages;
 use App\Models\Inc\BusinessSetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+
 
 class AdminController extends Controller
 {

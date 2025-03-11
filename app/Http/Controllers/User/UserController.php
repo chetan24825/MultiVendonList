@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\Inc\Lead;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Inc\Favourite;
 use App\Models\Orders\UserOrders;
 use App\Http\Controllers\Controller;
-use App\Models\Inc\Favourite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -56,9 +58,44 @@ class UserController extends Controller
 
     public function Order()
     {
-        $orders  = UserOrders::where('guard', current_guard())->where('user_id', Auth::id())->get();
-        return view('user.orders.orders', compact('orders'));
+        $leads  = Lead::where('user_id', Auth::id())->get();
+        return view('user.orders.orders', compact('leads'));
     }
+
+
+    public function toStoreOrder(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            "title"       => "required|string|max:255",
+            "status"      => "required|in:0,1",
+            "browse"      => "nullable|string",
+            "start_range" => "required|numeric|min:0",
+            "end_range"   => "required|numeric|gt:start_range",
+            "description" => "nullable|string",
+        ]);
+
+
+        // Create a new order
+        $order = new Lead();
+        $order->user_id = Auth::id();
+        $order->guard = current_guard();
+        $order->title = $request->title;
+        $order->title_slug = Str::slug($request->title);
+        $order->status = $request->status;
+        $order->browse = $request->browse;
+        $order->start_range = $request->start_range;
+        $order->end_range = $request->end_range;
+        $order->description = $request->description;
+        if ($order->save()) {
+            return redirect()->back()->with('success', 'Order created successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Order created failed.');
+        }
+    }
+
+
+
 
     public function VisitingCards()
     {

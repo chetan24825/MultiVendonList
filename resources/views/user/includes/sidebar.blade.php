@@ -24,20 +24,22 @@
                     </a>
                 </li>
 
+
                 <li>
-                    <a href="#">
+                    <a href="{{ route('user.order') }}">
                         <i class="fa fa-palette"></i>
-                        <span> My Orders</span>
+                        <span> My Leads</span>
                     </a>
 
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="{{ route('user.visitingcards') }}">
                         <i class="fa fa-heart"></i>
                         <span>My Favourites</span>
                     </a>
                 </li>
+
 
                 <li>
                     <a href="{{ route('logout') }}" class="">

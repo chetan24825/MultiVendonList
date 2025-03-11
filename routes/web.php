@@ -39,7 +39,10 @@ Route::group(['middleware' => ['auth:web', 'user.active'], 'prefix' => 'user', '
     Route::post('/change-password', [UserController::class, 'toChangePassword'])->name('password');
 
     Route::post('epin-generate', [UserController::class, 'toepingenerate'])->name('epin.generate');
+
     Route::get('order', [UserController::class, 'Order'])->name('order');
+    Route::post('order', [UserController::class, 'toStoreOrder']);
+
     Route::get('favourites', [UserController::class, 'VisitingCards'])->name('visitingcards');
     Route::delete('favourite/delete/{id}', [UserController::class, 'toDeleteFavourite'])->name('user.favourite');
 

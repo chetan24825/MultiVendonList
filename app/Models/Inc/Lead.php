@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Models\Inc;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Lead extends Model
+{
+    protected $table = 'leads';
+    protected $guarded = [];
+}

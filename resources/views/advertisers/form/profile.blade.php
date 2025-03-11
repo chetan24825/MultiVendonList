@@ -99,7 +99,7 @@
                                         <div class="col-md-6 mt-2">
                                             <label class="form-label">State</label>
 
-                                            <select name="state" class="form-control"  id="state-select">
+                                            <select name="state" class="form-control" id="select2-1">
                                                 <option value="">Select State</option>
                                                 @foreach ($states->sortBy('name') as $state)
                                                     <option value="{{ $state->id }}"
@@ -247,10 +247,9 @@
     <link rel="stylesheet" href="{{ asset('panel/libs/select2/css/select2.min.css') }}">
 @endpush
 
-
 @push('scripts')
     <script src="{{ asset('panel/libs/select2/js/select2.min.js') }}"></script>
-    <script src="{{asset('panel/js/pages/form-select2.init.js')}}"></script>
+    <script src="{{ asset('panel/js/pages/form-select2.init.js') }}"></script>
     <script>
         $(document).ready(function() {
             // Initialize Select2 for the Technologies select box
@@ -262,7 +261,7 @@
     </script>
 
     <script>
-        $('#state-select').change(function() {
+        $('#select2-1').change(function() {
             var state = $(this).val();
             $.ajax({
                 url: '{{ route('advertiser.getCitiesByState') }}',

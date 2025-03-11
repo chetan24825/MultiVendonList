@@ -29,7 +29,13 @@ Route::group(['middleware' => ['auth:advertiser', 'user.active', 'profile.regist
     Route::post('/profile', [AdvertiserController::class, 'toAdvertiserprofileUpdate']);
     Route::post('/profile/change-password', [AdvertiserController::class, 'toAdvertiserprofileChangePassword'])->name('password');
 
+    //Withdrawal
+    Route::get('/withdraw', [AdvertiserController::class, 'towithdrawindex'])->name('withdraw');
+    Route::post('/withdraw', [AdvertiserController::class, 'towithdraw']);
 
+    //Wallet
+    Route::get('/wallet', [AdvertiserController::class, 'towallet'])->name('wallet');
+    Route::post('/wallet', [AdvertiserController::class, 'towalletstore']);
 
     //AJax
     Route::get('/products/cities', [LocationController::class, 'getCitiesByState'])->name('getCitiesByState');

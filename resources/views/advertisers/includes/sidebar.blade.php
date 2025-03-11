@@ -21,6 +21,28 @@
                 </li>
 
 
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow ">
+                        <i class="fas fa-wallet"></i>
+                        <span>My Wallet</span>
+                    </a>
+
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('advertiser.wallet') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i>Wallet</a>
+                        </li>
+
+                        <li><a href="{{route('advertiser.withdraw')}}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i>Withdraw</a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+
+
 
                 <li>
                     <a href="{{ route('logout') }}" class="">

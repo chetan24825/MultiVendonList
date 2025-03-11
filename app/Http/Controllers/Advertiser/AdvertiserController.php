@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Advertiser;
 
 use Illuminate\Http\Request;
 use App\Models\Location\City;
-use App\Models\Location\State;
-use App\Http\Controllers\Controller;
 use App\Models\Inc\Technology;
+use App\Models\Location\State;
+use App\Models\Payment\Wallet;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -87,5 +89,188 @@ class AdvertiserController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         return redirect()->back()->with('success', 'Password updated successfully.');
+    }
+
+
+
+    function towithdrawindex(Request $request)
+    {
+        try {
+            // Start Query
+            $query = Withdrawal::where('user_id', Auth::id());
+
+            // Search Filter
+            if ($request->has('search')) {
+                $sort = $request->search;
+                $query->where('amount', 'like', '%' . $sort . '%');
+            }
+
+            // Date Range Filter (Defaults to Today's Date)
+            $startDate = $request->start_date ?? now()->toDateString();
+            $endDate = $request->end_date ?? now()->toDateString();
+
+            if ($startDate && $endDate) {
+                $query->whereBetween('created_at', ["$startDate 00:00:00", "$endDate 23:59:59"]);
+            } elseif ($startDate) {
+                $query->whereDate('created_at', '=', $startDate);
+            } elseif ($endDate) {
+                $query->whereDate('created_at', '=', $endDate);
+            }
+
+            // Fetch & Paginate
+            $withdrawal = $query->orderBy('id', 'DESC')->paginate(10);
+            return view('user.withdrawal.withdrawal', compact('withdrawal'));
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Something went wrong' . $th->getMessage());
+        }
+    }
+
+
+
+    // --------------------------------------------------------------------------------------------------
+    // ---------------------------------------------Withdraw Link--------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------
+
+
+
+    public function towithdraw(Request $request)
+    {
+        $user = Auth::user();
+
+        $minWithdrawalAmount = optional(Withdrawal::where('user_id', $user->id)
+            ->where('status', 1)
+            ->latest()
+            ->first())->amount ?? 1;
+
+        $min = $minWithdrawalAmount * 2;
+
+
+        // Validate the input amount
+        $request->validate([
+            'amount' => "required|numeric|min:$min|max:" . ($user->commission_balance),
+        ], [
+            'amount.min' => 'The minimum withdrawal amount is ' . get_setting('symbol') . $min,
+            'amount.max' => 'You do not have sufficient balance to withdraw this amount.',
+        ]);
+
+        $requestedAmount = (float) $request->amount;
+
+        try {
+            $pending = Withdrawal::where('user_id', $user->id)
+                ->where('status', 0)->count();
+            if ($pending > 0) {
+                return redirect()->back()->with('error', 'You already have a pending withdrawal request. Please wait for it to be processed.');
+            }
+            // Create a new withdrawal request
+            $withdrawal = new Withdrawal();
+            $withdrawal->user_id = Auth::user()->id;
+            $withdrawal->transaction_id = 'WD' . now()->format('YmdHis');
+            $withdrawal->withdrawal_amount = $requestedAmount;
+            $withdrawal->status = 0;
+            $withdrawal->save();
+            return redirect()->back()->with('success', 'Your withdrawal request has been submitted successfully. It will be processed in 96 hours.');
+        } catch (\Exception $e) {
+            // Handle exceptions
+            return redirect()->back()->with('error', 'An error occurred while processing your withdrawal request. Please try again later.');
+        }
+    }
+
+
+    // --------------------------------------------------------------------------------------------------
+    // ---------------------------------------------Wallet Link--------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------
+
+
+    public function towallet(Request $request)
+    {
+        try {
+            // Start Query
+            $query = Wallet::where('user_id', Auth::id());
+
+            // Search Filter
+            if ($request->has('search')) {
+                $sort = $request->search;
+                $query->where('amount', 'like', '%' . $sort . '%');
+            }
+
+            $startDate = $request->has('start_date') ? $request->start_date : null;
+            $endDate = $request->has('end_date') ? $request->end_date : now()->toDateString();
+
+            if ($startDate && $endDate) {
+                $query->whereBetween('created_at', ["$startDate 00:00:00", "$endDate 23:59:59"]);
+            } elseif ($startDate) {
+                $query->whereDate('created_at', '>=', $startDate);
+            } elseif ($endDate) {
+                $query->whereDate('created_at', '<=', $endDate);
+            }
+            $wallet_transaction = $query->orderBy('id', 'DESC')->paginate(10);
+
+            return view('advertisers.wallet.wallet', compact('wallet_transaction'));
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $th->getMessage());
+        }
+    }
+
+
+
+    public function towalletstore(Request $request)
+    {
+        try {
+            // Validate the request data
+            $request->validate([
+                'amount' => 'required|numeric|min:1',
+            ], [
+                'amount.required' => 'The amount field is required.',
+                'amount.numeric' => 'The amount must be a valid number.',
+                'amount.min' => 'The minimum deposit amount is $110.',
+            ]);
+
+            // Begin Transaction
+            DB::beginTransaction();
+
+            // Get the authenticated user
+            $user = Auth::user();
+
+            // Create a wallet entry
+            $wallet = new Wallet();
+            $wallet->user_id = $user->id;
+            $wallet->amount = $request->amount;
+            $wallet->utr_id = $request->utr_id;
+            $wallet->transaction_id = 'WAL' . now()->format('YmdHis');
+            $wallet->status = 0; // 1 for success
+            $wallet->save();
+
+            // Prepare payment request
+            $order_Id = $wallet->transaction_id;
+            $amount = $request->amount;
+            $notify_url = route('user.query.order');
+            $return_url = route('user.payment.callback');
+            $ip = request()->ip();
+            $remark = '';
+
+            // Call the payment API
+            $response = $this->lgPayService->createOrder($order_Id, $amount, $notify_url, $return_url, $ip, $remark);
+
+            if (isset($response['status']) && $response['status'] == 1) {
+                DB::commit(); // Commit transaction
+
+                // Store response in session before redirecting
+                session()->flash('payment_response', $response);
+
+                return redirect()->back();
+            } else {
+                DB::rollBack(); // Rollback on failure
+
+                return redirect()->back()->with('error', $response['msg'] ?? 'Payment failed.');
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Database error: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
     }
 }
