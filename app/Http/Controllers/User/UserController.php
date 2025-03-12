@@ -94,6 +94,35 @@ class UserController extends Controller
         }
     }
 
+    function toUpdateOrder(Request $request)
+    {
+        $request->validate([
+            "id"          => "required|numeric",
+            "title"       => "required|string|max:255",
+            "status"      => "required|in:0,1",
+            "browse"      => "nullable|string",
+            "start_range" => "required|numeric|min:0",
+            "end_range"   => "required|numeric|gt:start_range",
+            "description" => "nullable|string",
+        ]);
+
+        $order = Lead::find($request->id);
+        $order->user_id = Auth::id();
+        $order->guard = current_guard();
+        $order->title = $request->title;
+        $order->title_slug = Str::slug($request->title);
+        $order->status = $request->status;
+        $order->browse = $request->browse;
+        $order->start_range = $request->start_range;
+        $order->end_range = $request->end_range;
+        $order->description = $request->description;
+        if ($order->save()) {
+            return redirect()->back()->with('success', 'Order updated successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Order updated failed.');
+        }
+    }
+
 
 
 

@@ -79,7 +79,7 @@
 
                                         <div class="col-md-6 mt-2">
                                             <label class="form-label">Phone <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" name="phone" maxlength="10"
+                                            <input type="text" class="form-control" name="phone" maxlength="10"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
                                                 value="{{ old('phone', auth()->user()->phone) }}" required />
                                             @error('phone')
@@ -102,8 +102,8 @@
                                             <select name="state" class="form-control" id="select2-1">
                                                 <option value="">Select State</option>
                                                 @foreach ($states->sortBy('name') as $state)
-                                                    <option value="{{ $state->id }}"
-                                                        @if (auth()->user()->state == $state->id) selected @endif>
+                                                    <option value="{{ $state->name }}"
+                                                        @if (auth()->user()->state == $state->name) selected @endif>
                                                         {{ $state->name }}
                                                     </option>
                                                 @endforeach
@@ -118,7 +118,7 @@
                                         <div class="col-md-6 mt-2">
                                             <label class="form-label">City</label>
                                             <select name="city" class="form-control" id="city-select">
-                                                <option value="{{ $cities->id }}">{{ $cities->name }}</option>
+                                                <option value="{{ $cities->id ?? 'Others' }}">{{ $cities->name ?? 'Others' }}</option>
                                             </select>
 
                                             @error('city')

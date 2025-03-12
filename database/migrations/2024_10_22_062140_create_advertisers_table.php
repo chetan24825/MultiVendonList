@@ -21,13 +21,24 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('city')->nullable();
 
-            $table->string('company_name')->nullable();
+            $table->longText('company_name')->nullable();
             $table->string('phone2')->nullable();
             $table->string('technologies')->nullable();
             $table->string('type')->nullable()->comment('Individual: 1, Company: 2');
             $table->longText('address')->nullable();
 
-            $table->string('email')->unique()->nullable();
+            $table->longText('email')->nullable();
+
+
+            $table->longText('company_slug')->nullable();
+            $table->longText('zipcode')->nullable();
+            $table->longText('timing')->nullable();
+            $table->longText('website')->nullable();
+            $table->string('data_from')->nullable()->comment('1 => Import, 2 => Website');
+
+
+
+
             $table->string('avatar')->nullable();
             $table->string('phone')->nullable();
             $table->tinyInteger('status')->default(1);  // status 0 => inactive , 1 => active

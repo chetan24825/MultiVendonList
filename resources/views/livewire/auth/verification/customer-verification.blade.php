@@ -140,7 +140,7 @@
                                                     class="form-control">
                                                     <option value="">Select State</option>
                                                     @foreach ($allState as $stateOption)
-                                                        <option value="{{ $stateOption->id }}">
+                                                        <option value="{{ $stateOption->name }}">
                                                             {{ $stateOption->name }}
                                                         </option>
                                                     @endforeach
@@ -197,6 +197,6 @@
 @endpush
 
 @push('site-scripts')
-<script src="{{ asset('panel/js/pages/form-select2.init.js') }}"></script>
-<script src="{{ asset('panel/libs/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('panel/js/pages/form-select2.init.js') }}"></script>
+    <script src="{{ asset('panel/libs/select2/js/select2.min.js') }}"></script>
 @endpush

@@ -25,6 +25,8 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     // Companies
     Route::get('/companies', [CompanyController::class, 'toAdminCompanies'])->name('companies');
 
+    Route::get('/companies/import', [AdminController::class, 'tocompanyimport'])->name('companies.import');
+    Route::post('/companies/import', [AdminController::class, 'tocompanyimportexcel']);
 
     // Users
     Route::get('/users', [UserAdminController::class, 'tousers'])->name('users');

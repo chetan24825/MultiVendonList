@@ -83,13 +83,7 @@
                     </form>
 
 
-                    @if (session()->has('payment_response'))
-                        @php $response = session('payment_response'); @endphp
-                        <div class="img-thumbnail">
-                            {!! $response['qr_code'] !!}
-                        </div>
-                        <a href="{{ $response['pay_url'] }}" class="btn btn-success">Pay Now</a>
-                    @endif
+
 
 
                     <div class="row">

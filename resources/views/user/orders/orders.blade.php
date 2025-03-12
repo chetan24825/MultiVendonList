@@ -230,13 +230,15 @@
                                                                             data-bs-dismiss="modal"
                                                                             aria-label="Close"></button>
                                                                     </div>
-                                                                    <form action="#" method="POST">
+                                                                    <form action="{{ route('user.order.update') }}"
+                                                                        method="POST">
                                                                         @csrf
-                                                                        @method('PUT')
+                                                                        <input type="hidden" name="id"
+                                                                            value="{{ $lead->id }}">
                                                                         <div class="modal-body">
                                                                             <div class="row">
 
-                                                                                <div class="col-md-12 mb-3">
+                                                                                <div class="col-md-6 mb-3">
                                                                                     <label for="exampleFormControlInput1"
                                                                                         class="form-label">Status<span
                                                                                             class="text-danger">*</span></label>
@@ -245,10 +247,10 @@
                                                                                         class="form-control">
                                                                                         <option value="1"
                                                                                             {{ old('status', $lead->status) == '1' ? 'selected' : '' }}>
-                                                                                            Active</option>
+                                                                                            Publish</option>
                                                                                         <option value="0"
                                                                                             {{ old('status', $lead->status) == '0' ? 'selected' : '' }}>
-                                                                                            In-Active
+                                                                                            Draft
                                                                                         </option>
                                                                                     </select>
 
@@ -258,6 +260,91 @@
                                                                                             <strong>{{ ucwords($message) }}</strong>
                                                                                         </span>
                                                                                     @enderror
+                                                                                </div>
+
+                                                                                <!-- Profile Photo -->
+                                                                                <div class="col-md-6">
+                                                                                    <label for="browse"
+                                                                                        class="form-label">Browse</label>
+                                                                                    <div class="input-group"
+                                                                                        data-toggle="aizuploader"
+                                                                                        data-type="image"
+                                                                                        data-multiple="false">
+                                                                                        <div class="input-group-prepend">
+                                                                                            <div
+                                                                                                class="input-group-text bg-soft-secondary font-weight-medium">
+                                                                                                Browse </div>
+                                                                                        </div>
+                                                                                        <div
+                                                                                            class="form-control file-amount">
+                                                                                            Choose File</div>
+                                                                                        <input type="hidden"
+                                                                                            name="browse"
+                                                                                            value="{{ old('browse', $lead->browse) }}"
+                                                                                            class="selected-files custom-file-input">
+                                                                                    </div>
+                                                                                    <div class="file-preview box sm"></div>
+                                                                                    @error('browse')
+                                                                                        <div class="invalid-feedback">
+                                                                                            {{ $message }}</div>
+                                                                                    @enderror
+                                                                                </div>
+
+                                                                                <div class="col-md-6">
+                                                                                    <label for="title"
+                                                                                        class="form-label">Title Name<span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <input type="text" name="title"
+                                                                                        id="title"
+                                                                                        class="form-control"
+                                                                                        placeholder="Enter Title Name"
+                                                                                        value="{{ old('title', $lead->title) }}"
+                                                                                        required>
+                                                                                    @error('title')
+                                                                                        <span
+                                                                                            class="text-danger">{{ $message }}</span>
+                                                                                    @enderror
+                                                                                </div>
+
+
+                                                                                <div class="col-md-6">
+                                                                                    <label for="start_range"
+                                                                                        class="form-label">Start Range<span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <input type="number" min="0"
+                                                                                        name="start_range"
+                                                                                        id="start_range"
+                                                                                        class="form-control"
+                                                                                        placeholder="Enter Start Range"
+                                                                                        value="{{ old('start_range', $lead->start_range) }}"
+                                                                                        required>
+                                                                                    @error('start_range')
+                                                                                        <span
+                                                                                            class="text-danger">{{ $message }}</span>
+                                                                                    @enderror
+                                                                                </div>
+
+                                                                                <div class="col-md-6">
+                                                                                    <label for="end_range"
+                                                                                        class="form-label">End Range<span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <input type="number" min="0"
+                                                                                        name="end_range" id="end_range"
+                                                                                        class="form-control"
+                                                                                        placeholder="Enter End Range"
+                                                                                        value="{{ old('end_range', $lead->end_range) }}"
+                                                                                        required>
+                                                                                    @error('end_range')
+                                                                                        <span
+                                                                                            class="text-danger">{{ $message }}</span>
+                                                                                    @enderror
+                                                                                </div>
+
+                                                                                <div class="col-md-12">
+                                                                                    <label for="status"
+                                                                                        class="form-label">Description
+                                                                                    </label>
+                                                                                    <textarea name="description" id="description" class="form-control" cols="4" rows="4">{{ old('description', $lead->description) }}</textarea>
                                                                                 </div>
 
 

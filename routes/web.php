@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth:web', 'user.active'], 'prefix' => 'user', '
 
     Route::get('order', [UserController::class, 'Order'])->name('order');
     Route::post('order', [UserController::class, 'toStoreOrder']);
+    Route::post('order/update', [UserController::class, 'toUpdateOrder'])->name('order.update');
 
     Route::get('favourites', [UserController::class, 'VisitingCards'])->name('visitingcards');
     Route::delete('favourite/delete/{id}', [UserController::class, 'toDeleteFavourite'])->name('user.favourite');

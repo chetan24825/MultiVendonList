@@ -10,10 +10,21 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('admin.companies') }}">
+                    <a href="javascript: void(0);" class="has-arrow ">
                         <i class="fa fa-th-list"></i>
                         <span>Companies </span>
                     </a>
+
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('admin.companies') }}"><i
+                                    class="mdi mdi-checkbox-blank-circle align-middle"></i>
+                                List of Companies</a></li>
+
+                        <li><a href="{{ route('admin.companies.import') }}"><i
+                                    class="mdi mdi-checkbox-blank-circle align-middle"></i>
+                                Import Companies</a></li>
+
+                    </ul>
 
                 </li>
 
