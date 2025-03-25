@@ -118,7 +118,7 @@
                                         <div class="col-md-6 mt-2">
                                             <label class="form-label">City</label>
                                             <select name="city" class="form-control" id="city-select">
-                                                <option value="{{ $cities->id ?? 'Others' }}">{{ $cities->name ?? 'Others' }}</option>
+                                                <option value="{{ $cities->id ?? 'other' }}">{{ $cities->name ?? 'Others' }}</option>
                                             </select>
 
                                             @error('city')
@@ -275,13 +275,13 @@
                     citySelect.append('<option value="">Select District</option>');
 
                     $.each(data, function(index, city) {
-                        citySelect.append('<option value="' + city.id + '">' + city.name +
+                        citySelect.append('<option value="' + city.name + '">' + city.name +
                             '</option>');
                     });
-                    citySelect.append('<option value="10">Others</option>');
+                    citySelect.append('<option value="other">Others</option>');
                     $('#block-select').empty().append(
                         '<option value="">Select Block</option>' +
-                        '<option value="10">Others</option>'
+                        '<option value="other">Others</option>'
                     );
                 },
                 error: function(xhr, status, error) {

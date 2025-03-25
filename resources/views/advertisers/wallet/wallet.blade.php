@@ -72,6 +72,17 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
+
+                                            <div class="col-md-6">
+                                                <label for="utr_id" class="form-label mt-12">UTR Id <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" required id="utr_id"
+                                                    name="utr_id" value="{{ old('utr_id') }}" />
+                                                @error('utr_id')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
                                             <div class="col-md-12">
                                                 <button type="submit" class="btn btn-success mt-4">Add </button>
                                             </div>
@@ -140,10 +151,8 @@
                                                 <th>#</th>
                                                 <th>Transaction Id</th>
                                                 <th>Amount</th>
-                                                <th>Verification</th>
                                                 <th>Date</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -157,18 +166,7 @@
 
                                                     <td>{{ get_setting('symbol') }}{{ $transaction->amount }}</td>
 
-
-
                                                     <td>
-                                                        @if ($transaction->verification_request_user == 0)
-                                                            <span class="badge bg-success">Verified</span>
-                                                        @elseif ($transaction->verification_request_user == 1)
-                                                            <span class="badge bg-info">Processing..</span>
-                                                        @endif
-                                                    </td>
-
-                                                    <td>
-
                                                         {{ $transaction->created_at->format('d-M-Y, h:i A') }}
                                                     </td>
                                                     <td>
@@ -180,31 +178,6 @@
                                                             <span class="badge bg-danger">Failed</span>
                                                         @endif
                                                     </td>
-
-                                                    <td>
-                                                        @if ($transaction->verification == 0)
-                                                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-info"> <i
-                                                                        class=" fas fa-ellipsis-h"></i></button>
-                                                                <button type="button"
-                                                                    class="btn btn-info dropdown-toggle dropdown-toggle-split"
-                                                                    data-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false">
-                                                                    <span class="sr-only">Toggle Dropdown</span>
-                                                                </button>
-                                                                <div class="dropdown-menu">
-                                                                    <a class="dropdown-item verify"
-                                                                        href="javascript:void(0)"
-                                                                        data-id="{{ $transaction->id }}">Verified
-                                                                        Request</a>
-                                                                </div>
-
-                                                            </div>
-                                                        @else
-                                                            <span class="badge bg-secondary">Verified</span>
-                                                        @endif
-                                                    </td>
-
                                                 </tr>
                                             @endforeach
                                         </tbody>

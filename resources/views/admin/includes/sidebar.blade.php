@@ -64,7 +64,7 @@
                     </a>
 
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="#">
+                        <li><a href="{{ route('admin.leads') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i>General Leads</a>
                         </li>
 

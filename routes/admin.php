@@ -6,6 +6,7 @@ use App\Http\Controllers\AizUploadController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\Basic\UserLeadsController;
 use App\Http\Controllers\Admin\IndividualController;
 use App\Http\Controllers\Admin\TechnologyController;
 
@@ -15,6 +16,7 @@ Route::get('/', AdminLogin::class)->name('login')->middleware('guest');
 
 Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     Route::get('/dashboard', [AdminController::class, 'toAdminDashboard'])->name('dashboard');
+
 
     //Technology
     Route::get('/technology', [TechnologyController::class, 'toAdminTechnology'])->name('technology');
@@ -36,6 +38,10 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
 
     // Individual
     Route::get('/individual', [IndividualController::class, 'toAdminIndividual'])->name('individual');
+
+    //General Leads
+    Route::get('/leads', [UserLeadsController::class, 'toAdminLeads'])->name('leads');
+    Route::post('leads/update', [UserLeadsController::class, 'toUpdateOrder'])->name('leads.update');
 
 
     //Globaly

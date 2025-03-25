@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('city')->nullable();
 
+            $table->decimal('balance', 13, 2)->default(0);
+
             $table->longText('company_name')->nullable();
             $table->string('phone2')->nullable();
             $table->string('technologies')->nullable();

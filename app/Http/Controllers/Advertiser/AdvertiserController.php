@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Advertiser;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Location\City;
 use App\Models\Inc\Technology;
@@ -40,11 +41,11 @@ class AdvertiserController extends Controller
             'last_name'    => 'nullable|string|max:50',
             'company_name' => 'nullable|string|max:100',
             'email'        => 'nullable|email|max:100',
-            'phone'        => 'required|digits:10',
-            'phone_2'      => 'nullable|digits:10',
+            'phone'        => 'required|string|max:20',
+            'phone_2'      => 'nullable|string|max:20',
             'country'      => 'nullable|string|max:50',
-            'state'        => 'nullable|exists:states,id',
-            'city'         => 'nullable|exists:cities,id',
+            'state'        => 'nullable|exists:states,name',
+            'city'         => 'nullable|exists:cities,name',
             'avatar'       => 'nullable|string',
             'address'      => 'nullable|string|max:255',
         ]);
@@ -193,18 +194,20 @@ class AdvertiserController extends Controller
                 $query->where('amount', 'like', '%' . $sort . '%');
             }
 
-            $startDate = $request->has('start_date') ? $request->start_date : null;
-            $endDate = $request->has('end_date') ? $request->end_date : now()->toDateString();
+            // Date Range Filter - Only apply if at least one date is provided
+            if ($request->filled('start_date') || $request->filled('end_date')) {
+                $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date)->startOfDay() : null;
+                $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay() : now()->endOfDay();
 
-            if ($startDate && $endDate) {
-                $query->whereBetween('created_at', ["$startDate 00:00:00", "$endDate 23:59:59"]);
-            } elseif ($startDate) {
-                $query->whereDate('created_at', '>=', $startDate);
-            } elseif ($endDate) {
-                $query->whereDate('created_at', '<=', $endDate);
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    $query->where('created_at', '>=', $startDate);
+                } elseif ($endDate) {
+                    $query->where('created_at', '<=', $endDate);
+                }
             }
             $wallet_transaction = $query->orderBy('id', 'DESC')->paginate(10);
-
             return view('advertisers.wallet.wallet', compact('wallet_transaction'));
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Something went wrong: ' . $th->getMessage());
@@ -218,11 +221,13 @@ class AdvertiserController extends Controller
         try {
             // Validate the request data
             $request->validate([
-                'amount' => 'required|numeric|min:1',
+                'amount' => 'required|numeric|min:110',
+                'utr_id' => 'required|string', // Ensure UTR ID is provided
             ], [
                 'amount.required' => 'The amount field is required.',
                 'amount.numeric' => 'The amount must be a valid number.',
                 'amount.min' => 'The minimum deposit amount is $110.',
+                'utr_id.required' => 'UTR ID is required.',
             ]);
 
             // Begin Transaction
@@ -237,33 +242,18 @@ class AdvertiserController extends Controller
             $wallet->amount = $request->amount;
             $wallet->utr_id = $request->utr_id;
             $wallet->transaction_id = 'WAL' . now()->format('YmdHis');
-            $wallet->status = 0; // 1 for success
-            $wallet->save();
+            $wallet->status = 0; // 0 = Pending, 1 = Success
 
-            // Prepare payment request
-            $order_Id = $wallet->transaction_id;
-            $amount = $request->amount;
-            $notify_url = route('user.query.order');
-            $return_url = route('user.payment.callback');
-            $ip = request()->ip();
-            $remark = '';
-
-            // Call the payment API
-            $response = $this->lgPayService->createOrder($order_Id, $amount, $notify_url, $return_url, $ip, $remark);
-
-            if (isset($response['status']) && $response['status'] == 1) {
+            if ($wallet->save()) {
                 DB::commit(); // Commit transaction
-
-                // Store response in session before redirecting
-                session()->flash('payment_response', $response);
-
-                return redirect()->back();
-            } else {
-                DB::rollBack(); // Rollback on failure
-
-                return redirect()->back()->with('error', $response['msg'] ?? 'Payment failed.');
+                return redirect()->back()->with('success', 'Wallet added successfully.');
             }
+
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to add wallet. Please try again.');
+
         } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
@@ -273,4 +263,5 @@ class AdvertiserController extends Controller
             return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
+
 }
