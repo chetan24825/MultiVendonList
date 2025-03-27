@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
+// import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
@@ -10,8 +10,11 @@ export default defineConfig({
             refresh: true,
         }),
         vue(),
-        tailwindcss(),
+        // tailwindcss(),
     ],
+    assetsInclude: ['**/*.PNG']
 });
+
+
 
 

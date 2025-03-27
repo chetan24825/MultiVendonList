@@ -17,7 +17,8 @@
         "livewire/livewire": "^3.6",
         "maatwebsite/excel": "^3.1",
         "otpless/otpless-auth-sdk": "^1.21",
-        "phpoffice/phpspreadsheet": "^1.29"
+        "phpoffice/phpspreadsheet": "^1.29",
+        "tightenco/ziggy": "^2.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

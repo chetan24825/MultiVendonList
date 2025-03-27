@@ -5,9 +5,28 @@ use App\Livewire\Auth\User\UserLogin;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\User\UserRegister;
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\Ajax\AjaxController;
+use App\Http\Controllers\Site\SiteController;
 use App\Http\Controllers\User\UserController;
 use App\Livewire\Auth\User\UserForgetPassword;
 
+$customSlug = get_setting('custom_slug');
+
+Route::get('/', [SiteController::class, 'index'])->name('site.index');
+Route::get('/state', [SiteController::class, 'toState'])->name('state');
+
+
+// Route::get("/$customSlug/others/{plumber}", [SiteController::class, 'toPlumberFeatured'])->name('plumber.other');
+Route::get("/$customSlug/{id}", [SiteController::class, 'tostatecity'])->name('states.city');
+Route::get("/$customSlug/{country}/{city}", [SiteController::class, 'toStateCityUser'])->name('country.city');
+Route::get("/$customSlug/{country?}/{city?}/{plumber?}", [SiteController::class, 'toStateCityUserPlumber'])->name('country.city.plumber');
+
+
+
+
+// AJAX Route
+Route::get('/ajax/get-cities/{id}', [AjaxController::class, 'togetCity'])->name('ajax.get-cities');
+Route::get("/ajax/{country}/{city}", [AjaxController::class, 'toStateCityUser'])->name('ajax.country-city');
 
 
 Route::get('/login', UserLogin::class)->name('login')->middleware('guest');
@@ -22,9 +41,9 @@ Route::get('/logout', function () {
     return redirect()->route('advertiser.login'); // Redirect to the login page (or any other route)
 })->name('logout');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 // hello
 
 

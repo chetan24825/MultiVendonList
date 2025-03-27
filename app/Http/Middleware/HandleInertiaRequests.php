@@ -2,8 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Http\Request;
+use App\Models\Location\Location;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -35,8 +36,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
         return array_merge(parent::share($request), [
-            //
+            'meta' => [
+                'title' => get_setting('meta_title'),
+                'description' => get_setting('meta_description'),
+                'keywords' => get_setting('meta_keywords'),
+                'author' => config('app.name'),
+                'favicon' => get_setting('favicon') ? uploaded_asset(get_setting('favicon')) : null,
+                'logo' => get_setting('web_logo') ? uploaded_asset(get_setting('web_logo')) : null,
+                'url' => url()->current(),
+
+            ],
+
+            'locations' => Location::all(),
+
+
         ]);
     }
 }

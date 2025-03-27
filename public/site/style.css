@@ -172,11 +172,11 @@ a.register-btn i {
     color: #259669;
 }
 
-.search-bar {
-    background: #f8fafc;
-    padding: 16px 0px;
 
-    /* border-bottom: 1px solid #eee; */
+
+.search-bar {
+    background: #259669;
+    padding: 20px 0px;
 }
 
 .top-form {
@@ -2430,4 +2430,25 @@ input#remember {
     font-size: 0.9rem;
     padding-left: 13px;
     padding-top: 5px;
+}
+
+
+
+/* Chetan  */
+
+form.top-form select {
+    background: #fff;
+    width: 100%;
+    border: none;
+    font-size: 14px;
+    height: 55px;
+    padding: 0px 20px;
+    padding-left: 34px;
+    position: relative;
+    border: 1px solid #359664;
+    border-radius: 8px 0px 0px 8px;
+    appearance: none; /* Removes default browser styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
 }
