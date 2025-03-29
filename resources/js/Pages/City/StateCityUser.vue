@@ -37,7 +37,7 @@ const getUpperCase = (text) => {
 <template>
 
     <Head>
-        <title>{{ getUpperCase(city) }} - {{sortname}}</title>
+        <title>{{ getUpperCase(city) }} - {{ sortname }}</title>
         <meta name="description" :content="`Find the best plumbers in ${getUpperCase(city)}, ${sortname}.`">
     </Head>
 
@@ -63,7 +63,7 @@ const getUpperCase = (text) => {
                             <i class="las la-tools"></i>
                         </div>
                         <h3>
-                            <a href="#">
+                            <a :href="route('country.city.plumber', [country, city, plumber.company_slug])">
                                 {{ plumber.company_name }}
                             </a>
                         </h3>
@@ -74,7 +74,7 @@ const getUpperCase = (text) => {
             </div>
 
             <div v-if="citiesPlumber.length === 0" class="text-center mt-4">
-                <p>No  found in {{ city }}, {{ sortname }}.</p>
+                <p>No found in {{ city }}, {{ sortname }}.</p>
             </div>
         </div>
     </div>

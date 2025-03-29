@@ -79,6 +79,7 @@ watch(selectedState, async (newState) => {
 watch(selectedCity, async (newCity) => {
     if (selectedState.value && newCity) {
         currentPage.value = 1; // Reset to first page
+        selectedCityName.value = newCity; // Store city name
         await fetchPlumbers(newCity, 1);
     } else {
         citiesPlumber.value = [];
@@ -253,8 +254,9 @@ const slugify = (text) => {
                             <i class="las la-tools"></i>
                         </div>
                         <h3>
-                            <a :href="route('country.city.plumber', [slugify(selectedStateName), 'dede', citiesPlumber.company_slug])">{{
-                                citiesPlumber.company_name }}</a>
+                            <a
+                                :href="route('country.city.plumber', [slugify(selectedStateName), slugify(selectedCityName), citiesPlumber.company_slug])">{{
+                                    citiesPlumber.company_name }}</a>
                         </h3>
                         <p>{{ citiesPlumber.address }}</p>
                         <p><strong>Phone:</strong> {{ citiesPlumber.phone }}</p>

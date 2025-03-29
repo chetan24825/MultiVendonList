@@ -83,17 +83,14 @@ class SiteController extends Controller
                 'sortname' => $Location->sortname
             ]);
         }
-
-        return redirect()->route('error.404');
     }
 
 
 
     function toStateCityUserPlumber($country, $city, $plumber)
     {
-        dd($country, $city, $plumber);
+
         $state = Location::where('slug', $country)->pluck('name')->first();
-        $city = ucwords(str_replace('-', ' ', $city));
 
         $plumber = Advertiser::where('company_slug', $plumber)
             ->where('state', $state)
@@ -103,7 +100,7 @@ class SiteController extends Controller
         return Inertia::render('City/StateCityUserDescription', [
             'country' => $country,
             'city' => $city,
-            'plumber' => $plumber
+            'data' => $plumber
         ]);
     }
 }
