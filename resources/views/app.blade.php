@@ -29,6 +29,8 @@
     @if (get_setting('favicon'))
         <link rel="icon" type="image/x-icon" href="{{ uploaded_asset(get_setting('favicon')) }}">
     @endif --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     @vite(['resources/js/app.js'])
     @inertiaHead
     @routes

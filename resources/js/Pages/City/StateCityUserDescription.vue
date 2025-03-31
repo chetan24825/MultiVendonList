@@ -1,6 +1,6 @@
 <script setup>
-import { defineProps } from 'vue';
-
+import { defineProps, ref, computed } from 'vue';
+import axios from 'axios';
 const props = defineProps({
     country: Array,
     city: Array,
@@ -12,6 +12,62 @@ const UrlFrame = (data) => {
     const formattedAddress = data.address.replace(/,/g, "").replace(/\s+/g, "+");
     return `https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=${formattedAddress}&z=14&output=embed`;
 };
+
+
+
+
+// Get Current URL
+const currentUrl = window.location.href;
+
+// Function to Extract Path Without First Segment
+function extractPathWithoutFirstSegment(url, startIndex = 1) {
+    const path = new URL(url, window.location.origin).pathname;
+    const segments = path.split('/').filter(segment => segment !== ""); // Remove empty elements
+    return segments.slice(startIndex).join('/');
+}
+
+// Reactive Form Data
+const form = ref({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    advertiser_id: computed(() => props.data?.id || ''),
+    url: extractPathWithoutFirstSegment(currentUrl),
+});
+
+const successMessage = ref('');
+// Get CSRF Token from Meta Tag
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+// Handle Form Submission
+const handleSubmit = async () => {
+    try {
+        const response = await axios.post('/lead/submit', form.value, {
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        alert(response.data.message);
+        successMessage.value = response.data.message;
+        // Reset Form while Keeping Reactivity
+        form.value = {
+            name: '',
+            email: '',
+            phone: '',
+            message: '',
+            advertiser_id: computed(() => props.data?.id || ''),
+            url: extractPathWithoutFirstSegment(currentUrl),
+        };
+
+    } catch (error) {
+        console.error("Form Submission Error:", error.response?.data || error.message);
+        alert("Something went wrong. Please try again.");
+    }
+};
+
 
 
 </script>
@@ -83,7 +139,7 @@ const UrlFrame = (data) => {
                             <li v-if="data.phone">
                                 <i class="las la-phone"></i>
                                 <div class="add-info">
-                                    <b>Call Us</b>
+                                    <b>Call Us </b>
                                     <p><a href="#"></a>{{ data.phone }}</p>
                                 </div>
                             </li>
@@ -91,7 +147,7 @@ const UrlFrame = (data) => {
                                 <i class="las la-envelope"></i>
                                 <div class="add-info">
                                     <b>Email Us</b>
-                                    <p><a href="#">{{ data.email }}</a></p>
+                                    <p><a href="#">{{ data.email }} </a></p>
                                 </div>
                             </li>
                         </ul>
@@ -100,24 +156,22 @@ const UrlFrame = (data) => {
 
                 <div class="col-md-4">
                     <div class="contact-form">
-                        <form action="#" method="post">
+                        <form @submit.prevent="handleSubmit">
                             <h3>Get in touch</h3>
-                            <p>Lorem ipsum dolor, sit amet consectetur elit. </p>
+                            <p>Fill out the form to contact us.</p>
+                            <p v-if="successMessage" class="alert alert-warning text-dark">{{ successMessage }}</p>
                             <div class="form-group">
-                                <input type="text" placeholder="Name">
+                                <input v-model="form.name" type="text" placeholder="Name" required>
+                                <!-- <input type="hidden" v-model="form.advertiser_id" value="{{ data.id }}"> -->
                             </div>
-
                             <div class="form-group">
-                                <input type="text" placeholder="Email">
+                                <input v-model="form.email" type="email" placeholder="Email" required>
                             </div>
-
                             <div class="form-group">
-                                <input type="text" placeholder="Phone Number">
+                                <input v-model="form.phone" type="text" placeholder="Phone Number">
                             </div>
-
                             <div class="form-group">
-                                <textarea placeholder="Your Message"></textarea>
-
+                                <textarea v-model="form.message" placeholder="Your Message" required></textarea>
                             </div>
                             <button type="submit">Submit</button>
                         </form>

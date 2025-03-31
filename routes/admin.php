@@ -43,6 +43,11 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     Route::get('/leads', [UserLeadsController::class, 'toAdminLeads'])->name('leads');
     Route::post('leads/update', [UserLeadsController::class, 'toUpdateOrder'])->name('leads.update');
 
+    // General Message
+    Route::get('/leads/messages', [UserLeadsController::class, 'toAdminLeadMessage'])->name('leads.message');
+    Route::post('leads/update/messages', [UserLeadsController::class, 'toUpdateMessage'])->name('leads.update.message');
+    Route::delete('leads/messages/{slug}', [UserLeadsController::class, 'toDeleteMessage'])->name('leads.delete.message');
+
 
     //Globaly
     Route::get('customer/view/{id}', [AdminController::class, 'toAdminView'])->name('view');

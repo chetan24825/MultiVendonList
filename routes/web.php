@@ -21,7 +21,7 @@ Route::get("/$customSlug/{id}", [SiteController::class, 'tostatecity'])->name('s
 Route::get("/$customSlug/{country}/{city}", [SiteController::class, 'toStateCityUser'])->name('country.city');
 Route::get("/$customSlug/{country?}/{city?}/{plumber?}", [SiteController::class, 'toStateCityUserPlumber'])->name('country.city.plumber');
 
-
+Route::post("lead/submit", [SiteController::class, 'toLeadStore'])->name('leads');
 
 
 // AJAX Route
@@ -38,7 +38,7 @@ Route::get('/logout', function () {
     Auth::logout(); // Logs out the current user
     request()->session()->invalidate(); // Invalidate the session
     request()->session()->regenerateToken(); // Regenerate the CSRF token for security
-    return redirect()->route('advertiser.login'); // Redirect to the login page (or any other route)
+    return redirect()->route('site.index'); // Redirect to the login page (or any other route)
 })->name('logout');
 
 // Route::get('/', function () {

@@ -33,7 +33,7 @@ class AjaxController extends Controller
         $citiesPlumber = DB::table('advertisers')
             ->where('city', 'like', $city . '%')
             ->where('state', 'like', $Location->name . '%')
-            ->paginate(30);
+            ->paginate(20);
 
         return response()->json([
             'cities' => $cities,

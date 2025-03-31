@@ -23,6 +23,7 @@
 @endif
 
 
+
 @if (get_setting('favicon'))
     <link rel="icon" type="image/x-icon" href="{{ uploaded_asset(get_setting('favicon')) }}">
 @endif

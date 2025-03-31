@@ -37,10 +37,6 @@ class CompanyController extends Controller
 
         $companies = $query->orderByDesc('id')->paginate(10);
 
-
-
-        // dd($companies);
-
         return view('admin.companies.company', compact('companies', 'count'));
     }
 

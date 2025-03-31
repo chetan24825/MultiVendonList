@@ -68,7 +68,7 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i>General Leads</a>
                         </li>
 
-                        <li><a href="#">
+                        <li><a href="{{ route('admin.leads.message') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i>Message Leads</a>
                         </li>
 

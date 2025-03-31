@@ -8,6 +8,7 @@ use App\Models\Location\City;
 use App\Models\Inc\Technology;
 use App\Models\Location\State;
 use App\Models\Payment\Wallet;
+use App\Models\Inc\MessageLead;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -251,7 +252,6 @@ class AdvertiserController extends Controller
 
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to add wallet. Please try again.');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return redirect()->back()->withErrors($e->validator)->withInput();
@@ -264,4 +264,109 @@ class AdvertiserController extends Controller
         }
     }
 
+
+
+    public function toAdminLeadMessage(Request $request)
+    {
+        $query = MessageLead::with('advertiser')
+            ->where('advertiser_id', Auth::id());
+        // ->where('transfer', 1);
+        // Search Filter
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        }
+
+        // Date Range Filter (Only apply if at least one date is provided)
+        if ($request->filled('start_date') || $request->filled('end_date')) {
+            $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date)->startOfDay() : null;
+            $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay() : now()->endOfDay();
+
+            if ($startDate && $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            } elseif ($startDate) {
+                $query->where('created_at', '>=', $startDate);
+            } else {
+                $query->where('created_at', '<=', $endDate);
+            }
+        }
+
+        $count = $query->count();
+        $leads = $query->orderByDesc('id')->paginate(10);
+
+        $Url = get_setting('custom_slug');
+
+        return view('advertisers.leads.message', compact('leads', 'Url', 'count'));
+    }
+
+
+    function toUpdateMessage(Request $request)
+    {
+        $request->validate([
+            "id"       => "required|exists:message_leads,id",
+            "status"    => "required|numeric",
+        ]);
+
+        $order = MessageLead::find($request->id);
+        $order->status = $request->status;
+        if ($order->save()) {
+            return redirect()->back()->with('success', 'Order updated successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Order updated failed.');
+        }
+    }
+
+
+    function toDeleteMessage($id)
+    {
+        $user = MessageLead::findOrFail($id);
+        if ($user->delete()) {
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function tobuyMessage(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            "lead_id" => "required|exists:message_leads,id",
+        ]);
+
+        $leadPrice = get_setting('message_lead');
+        $user = Auth::user();
+
+        // Check user balance
+        if ($user->balance < $leadPrice) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have enough balance to buy this lead.',
+            ], 400);
+        }
+
+        // Find the lead
+        $lead = MessageLead::find($request->lead_id);
+        if (!$lead) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lead not found.',
+            ], 404);
+        }
+
+        // Perform balance deduction & update lead status in a transaction
+        DB::transaction(function () use ($user, $lead, $leadPrice) {
+            $user->decrement('balance', $leadPrice);
+            $lead->update([
+                'lead_amount' => $leadPrice,
+                'payment_status' => 1,
+            ]);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lead purchased successfully.',
+            'lead'    => $lead,
+        ]);
+    }
 }

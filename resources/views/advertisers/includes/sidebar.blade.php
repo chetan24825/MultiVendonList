@@ -20,6 +20,25 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow ">
+                        <i class="fa fa-th-list"></i>
+                        <span>Leads </span>
+                    </a>
+
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('admin.leads') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i>General Leads</a>
+                        </li>
+
+                        <li><a href="{{ route('advertiser.leads.message') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i>Message Leads</a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow ">

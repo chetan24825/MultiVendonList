@@ -37,6 +37,13 @@ Route::group(['middleware' => ['auth:advertiser', 'user.active', 'profile.regist
     Route::get('/wallet', [AdvertiserController::class, 'towallet'])->name('wallet');
     Route::post('/wallet', [AdvertiserController::class, 'towalletstore']);
 
+    //Advertiser
+    Route::get('/leads/messages', [AdvertiserController::class, 'toAdminLeadMessage'])->name('leads.message');
+    Route::post('leads/update/messages', [AdvertiserController::class, 'toUpdateMessage'])->name('leads.update.message');
+    Route::delete('leads/messages/{slug}', [AdvertiserController::class, 'toDeleteMessage'])->name('leads.delete.message');
+    Route::post('leads/messages/buy', [AdvertiserController::class, 'tobuyMessage'])->name('leads.buy.message');
+
+
     //AJax
     Route::get('/products/cities', [LocationController::class, 'getCitiesByState'])->name('getCitiesByState');
 

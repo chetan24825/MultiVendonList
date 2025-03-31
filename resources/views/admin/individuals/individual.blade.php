@@ -62,7 +62,14 @@
 
                                                 <td>{{ $company->phone }}</td>
 
-                                                <td>{{ technology_name($company->technologies) }}</td>
+                                                <td>
+                                                    @if ($company->technologies)
+                                                        {{ technology_name($company->technologies) }}
+                                                    @else
+                                                        <span class="badge badge-danger">No Technology</span>
+                                                    @endif
+
+                                                </td>
                                                 <td>
                                                     <button id="status-button-{{ $company->id }}"
                                                         class="btn btn-sm btn-success"
@@ -71,8 +78,7 @@
                                                     </button>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.view', $company->id) }}"
-                                                        target="_blank"
+                                                    <a href="{{ route('admin.view', $company->id) }}" target="_blank"
                                                         class="btn btn-sm btn-primary">
                                                         View Now
                                                     </a>

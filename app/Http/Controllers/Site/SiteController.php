@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Location\Location;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Inc\MessageLead;
 
 class SiteController extends Controller
 {
@@ -70,12 +71,10 @@ class SiteController extends Controller
             $citiesPlumber = DB::table('advertisers')
                 ->where('city', 'like', $city . '%')
                 ->where('state', 'like', $Location['name'] . '%')
-                ->get();
-
-            // dd($citiesPlumber, $country, $cities->city_slug, $Location->sortname);
+                ->get(); // ✅ Fetch 6 plumbers per request
 
             return Inertia::render('City/StateCityUser', [
-                'citiesPlumber' => $citiesPlumber,
+                'citiesPlumber' => $citiesPlumber, // ✅ Send paginated data
                 'country' => $country,
                 'city' => $city,
                 'slug' => $cities->city_slug,
@@ -84,6 +83,7 @@ class SiteController extends Controller
             ]);
         }
     }
+
 
 
 
@@ -102,5 +102,26 @@ class SiteController extends Controller
             'city' => $city,
             'data' => $plumber
         ]);
+    }
+
+
+    function toLeadStore(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'message' => 'required',
+            'advertiser_id' => 'required|integer',
+            'url' => 'required|string',
+        ]);
+        $validatedData['current_guard'] = 'web';
+        // Save data to DB (assuming a Lead model)
+        $lead = MessageLead::create($validatedData);
+
+        return response()->json([
+            'message' => 'Lead submitted successfully!',
+            'lead' => $lead
+        ], 200);
     }
 }

@@ -378,6 +378,44 @@
                             </div>
 
 
+                            <div class="card">
+                                <div class="card-header card-header-bordered">
+                                    <h3 class="card-title">Lead Pricing </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-3">
+                                        <div>
+                                            <label for="exampleFormControlInput1" class="form-label">Message Lead</label>
+                                            <input type="number"
+                                                value="{{ old('message_lead', get_setting('message_lead')) }}"
+                                                name="message_lead" class="form-control" id="exampleFormControlInput1"
+                                                placeholder="" />
+                                            @error('message_lead')
+                                                <span class="text-danger" role="alert">
+                                                    <strong>{{ ucwords($message) }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label for="exampleFormControlInput1" class="form-label">General Leads</label>
+                                            <input type="number" class="form-control" name="general_lead"
+                                                id="exampleFormControlInput1" placeholder=""
+                                                value="{{ old('general_lead', get_setting('general_lead')) }}" />
+                                            @error('general_lead')
+                                                <span class="text-danger" role="alert">
+                                                    <strong>{{ ucwords($message) }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
 

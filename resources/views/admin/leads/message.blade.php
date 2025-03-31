@@ -5,8 +5,6 @@
         <div class="main-content">
             <div class="page-content">
                 <div class="container-fluid">
-
-
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
@@ -39,7 +37,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">List Of User Leads </h4>
+                                    <h4 class="card-title">List Of User Message Leads </h4>
                                 </div>
                                 <div class="card-body">
                                     <form action="" method="get">
@@ -67,7 +65,7 @@
                                         </div>
                                         <div class="col-md-12 m-3">
                                             <button id="filter" class="btn btn-primary">Filter</button>
-                                            <a href="{{ route('admin.leads') }}" class="btn btn-secondary">Reset</a>
+                                            <a href="{{ route('admin.leads.message') }}" class="btn btn-secondary">Reset</a>
                                         </div>
                                     </form>
 
@@ -77,12 +75,12 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>User Detail</th>
-                                                    <th>Lead Title</th>
+                                                    <th>Url</th>
+                                                    <th>User Name</th>
+                                                    <th>Phone</th>
                                                     <th>Description</th>
-                                                    <th>Range</th>
+                                                    <th>Payment</th>
                                                     <th>Status</th>
-                                                    <th>Staging</th>
                                                     <th>Created At</th>
                                                     <th>Operation</th>
                                                 </tr>
@@ -91,21 +89,45 @@
 
                                                 @foreach ($leads as $key => $lead)
                                                     <tr>
-
                                                         <td>
                                                             {{ $key + 1 + ($leads->currentPage() - 1) * $leads->perPage() }}
                                                         </td>
 
-                                                        <td>{{ $lead->user->name }}
-                                                            <br>
-                                                            {{ $lead->user->email }}
-                                                        </td>
-                                                        <td>{{ $lead->title }} </td>
-
-                                                        <td>{{ Str::limit($lead->description, 30, '...') }}</td>
                                                         <td>
-                                                            {{ $lead->start_range }} - {{ $lead->end_range }}
+                                                            <a target="_blank"
+                                                                href="{{ url('/' . $Url . '/' . $lead->url) }}">
+                                                                {{ $lead->advertiser->company_name }}
+                                                            </a>
                                                         </td>
+
+                                                        <td>{{ $lead->name }}
+                                                            <br>
+                                                            {{ $lead->email }}
+                                                        </td>
+
+                                                        <td>{{ $lead->phone }} </td>
+
+
+                                                        <td>
+                                                            <em data-bs-toggle="tooltip" style="cursor: pointer;"
+                                                                title="{{ $lead->message }}">
+                                                                {{ Str::limit($lead->message, 40, '...') }}
+                                                            </em>
+                                                        </td>
+
+                                                        <td>
+                                                            @if ($lead->payment_status == 0)
+                                                                <span class="badge badge-warning">
+                                                                    Pending
+                                                                </span>
+                                                            @endif
+                                                            @if ($lead->payment_status == 1)
+                                                                <span class="badge badge-success">
+                                                                    Success
+                                                                </span>
+                                                            @endif
+                                                        </td>
+
                                                         <td>
                                                             @if ($lead->status == 0)
                                                                 <span class="badge badge-warning">
@@ -117,36 +139,21 @@
                                                                     Published
                                                                 </span>
                                                             @endif
-                                                        </td>
 
-                                                        <td>
-                                                            @if ($lead->status_workflow == 0)
-                                                                <span class="badge badge-warning">
-                                                                    Pending
-                                                                </span>
-                                                            @endif
-                                                            @if ($lead->status_workflow == 1)
-                                                                <span class="badge badge-info">
-                                                                    Working
-                                                                </span>
-                                                            @endif
-
-                                                            @if ($lead->status_workflow == 2)
-                                                                <span class="badge badge-danger">
-                                                                    Rejected
-                                                                </span>
-                                                            @endif
-                                                            @if ($lead->status_workflow == 3)
+                                                            @if ($lead->status == 3)
                                                                 <span class="badge badge-success">
                                                                     Completed
                                                                 </span>
                                                             @endif
 
-
+                                                            @if ($lead->status == 2)
+                                                                <span class="badge badge-info">
+                                                                    Working
+                                                                </span>
+                                                            @endif
                                                         </td>
 
                                                         <td>
-
                                                             <span class="badge badge-success">
                                                                 {{ \Carbon\Carbon::parse($lead->created_at)->format('d,M Y') }}
                                                             </span>
@@ -157,6 +164,11 @@
                                                             <button class="btn btn-primary" data-bs-toggle="modal"
                                                                 data-bs-target="#editUserModal{{ $lead->id }}">
                                                                 <i class="fas fa-pencil-alt"></i> </button>
+
+                                                            <button type="button" class="btn btn-danger delete-btn"
+                                                                data-id="{{ $lead->id }}">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
 
                                                             <div class="modal fade" id="editUserModal{{ $lead->id }}"
                                                                 tabindex="-1"
@@ -173,7 +185,8 @@
                                                                                 data-bs-dismiss="modal"
                                                                                 aria-label="Close"></button>
                                                                         </div>
-                                                                        <form action="{{ route('admin.leads.update') }}"
+                                                                        <form
+                                                                            action="{{ route('admin.leads.update.message') }}"
                                                                             method="POST">
                                                                             @csrf
                                                                             <input type="hidden" name="id"
@@ -181,41 +194,7 @@
                                                                             <div class="modal-body">
                                                                                 <div class="row">
 
-                                                                                    <div class="col-md-12 mb-3">
-                                                                                        <label
-                                                                                            for="exampleFormControlInput1"
-                                                                                            class="form-label">Status
-                                                                                            WorkFlow<span
-                                                                                                class="text-danger">*</span></label>
 
-                                                                                        <select name="status_workflow"
-                                                                                            class="form-control">
-                                                                                            <option value="1"
-                                                                                                {{ old('status_workflow', $lead->status_workflow) == '1' ? 'selected' : '' }}>
-                                                                                                Working</option>
-                                                                                            <option value="0"
-                                                                                                {{ old('status_workflow', $lead->status_workflow) == '0' ? 'selected' : '' }}>
-                                                                                                Pending
-                                                                                            </option>
-
-                                                                                            <option value="2"
-                                                                                                {{ old('status_workflow', $lead->status_workflow) == '2' ? 'selected' : '' }}>
-                                                                                                Rejected
-                                                                                            </option>
-
-                                                                                            <option value="3"
-                                                                                                {{ old('status_workflow', $lead->status_workflow) == '3' ? 'selected' : '' }}>
-                                                                                                Completed
-                                                                                            </option>
-                                                                                        </select>
-
-                                                                                        @error('status_workflow')
-                                                                                            <span class="text-danger"
-                                                                                                role="alert">
-                                                                                                <strong>{{ ucwords($message) }}</strong>
-                                                                                            </span>
-                                                                                        @enderror
-                                                                                    </div>
 
                                                                                     <div class="col-md-6 mb-3">
                                                                                         <label
@@ -242,97 +221,38 @@
                                                                                         @enderror
                                                                                     </div>
 
-                                                                                    <!-- Profile Photo -->
-                                                                                    <div class="col-md-6">
-                                                                                        <label for="browse"
-                                                                                            class="form-label">Browse</label>
-                                                                                        <div class="input-group"
-                                                                                            data-toggle="aizuploader"
-                                                                                            data-type="image"
-                                                                                            data-multiple="false">
-                                                                                            <div
-                                                                                                class="input-group-prepend">
-                                                                                                <div
-                                                                                                    class="input-group-text bg-soft-secondary font-weight-medium">
-                                                                                                    Browse </div>
-                                                                                            </div>
-                                                                                            <div
-                                                                                                class="form-control file-amount">
-                                                                                                Choose File</div>
-                                                                                            <input type="hidden"
-                                                                                                name="browse"
-                                                                                                value="{{ old('browse', $lead->browse) }}"
-                                                                                                class="selected-files custom-file-input">
-                                                                                        </div>
-                                                                                        <div class="file-preview box sm">
-                                                                                        </div>
-                                                                                        @error('browse')
-                                                                                            <div class="invalid-feedback">
-                                                                                                {{ $message }}</div>
-                                                                                        @enderror
-                                                                                    </div>
-
-                                                                                    <div class="col-md-6">
-                                                                                        <label for="title"
-                                                                                            class="form-label">Title
-                                                                                            Name<span
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label
+                                                                                            for="exampleFormControlInput1"
+                                                                                            class="form-label">Lead
+                                                                                            Type<span
                                                                                                 class="text-danger">*</span></label>
-                                                                                        <input type="text"
-                                                                                            name="title" id="title"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Title Name"
-                                                                                            value="{{ old('title', $lead->title) }}"
-                                                                                            required>
-                                                                                        @error('title')
-                                                                                            <span
-                                                                                                class="text-danger">{{ $message }}</span>
+
+                                                                                        <select name="lead_type"
+                                                                                            class="form-control">
+                                                                                            <option value="1"
+                                                                                                {{ old('lead_type', $lead->lead_type) == '1' ? 'selected' : '' }}>
+                                                                                                Paid</option>
+                                                                                            <option value="0"
+                                                                                                {{ old('lead_type', $lead->lead_type) == '2' ? 'selected' : '' }}>
+                                                                                                Free
+                                                                                            </option>
+                                                                                        </select>
+
+                                                                                        @error('lead_type')
+                                                                                            <span class="text-danger"
+                                                                                                role="alert">
+                                                                                                <strong>{{ ucwords($message) }}</strong>
+                                                                                            </span>
                                                                                         @enderror
                                                                                     </div>
 
-
-                                                                                    <div class="col-md-6">
-                                                                                        <label for="start_range"
-                                                                                            class="form-label">Start
-                                                                                            Range<span
-                                                                                                class="text-danger">*</span></label>
-                                                                                        <input type="number"
-                                                                                            min="0"
-                                                                                            name="start_range"
-                                                                                            id="start_range"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Start Range"
-                                                                                            value="{{ old('start_range', $lead->start_range) }}"
-                                                                                            required>
-                                                                                        @error('start_range')
-                                                                                            <span
-                                                                                                class="text-danger">{{ $message }}</span>
-                                                                                        @enderror
-                                                                                    </div>
-
-                                                                                    <div class="col-md-6">
-                                                                                        <label for="end_range"
-                                                                                            class="form-label">End
-                                                                                            Range<span
-                                                                                                class="text-danger">*</span></label>
-                                                                                        <input type="number"
-                                                                                            min="0"
-                                                                                            name="end_range"
-                                                                                            id="end_range"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter End Range"
-                                                                                            value="{{ old('end_range', $lead->end_range) }}"
-                                                                                            required>
-                                                                                        @error('end_range')
-                                                                                            <span
-                                                                                                class="text-danger">{{ $message }}</span>
-                                                                                        @enderror
-                                                                                    </div>
 
                                                                                     <div class="col-md-12">
                                                                                         <label for="status"
-                                                                                            class="form-label">Description
+                                                                                            class="form-label">Message
                                                                                         </label>
-                                                                                        <textarea name="description" id="description" class="form-control" cols="4" rows="4">{{ old('description', $lead->description) }}</textarea>
+                                                                                        <textarea name="message" id="description" class="form-control" cols="4" rows="4">{{ old('message', $lead->message) }}</textarea>
                                                                                     </div>
 
 
@@ -378,6 +298,59 @@
         </div>
     </div>
 @endsection
+
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('panel/libs/sweetalert2/sweetalert2.min.css') }}">
+@endpush
+@push('scripts')
+    <script src="{{ asset('panel/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `You are about to delete the user. This action cannot be undone.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Perform the delete action
+                            fetch(`{{ url('admin/leads/messages') }}/${userId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                        'meta[name="csrf-token"]').getAttribute(
+                                        'content')
+                                }
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error(response.statusText);
+                                }
+                                return response.json();
+                            }).then(data => {
+                                Swal.fire('Deleted!', 'User has been deleted.',
+                                    'success').then(() => {
+                                    location.reload();
+                                });
+                            }).catch(error => {
+                                Swal.fire('Oops...', 'Something went wrong!',
+                                    'error');
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+@endpush
 
 @push('styles')
     <link href="{{ asset('panel/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"
