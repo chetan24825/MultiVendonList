@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('advertisers.layouts.app')
 
 @section('content')
     <div id="layout-wrapper">
@@ -84,7 +84,7 @@
                                                     <th>Status</th>
                                                     <th>Staging</th>
                                                     <th>Created At</th>
-                                                    <th>Operation</th>
+                                                    {{-- <th>Operation</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -96,16 +96,30 @@
                                                             {{ $key + 1 + ($leads->currentPage() - 1) * $leads->perPage() }}
                                                         </td>
 
-                                                        <td>{{ $lead->user->name }}
-                                                            <br>
-                                                            {{ $lead->user->email }}
-                                                        </td>
-                                                        <td>{{ $lead->title }} </td>
 
-                                                        <td>{{ Str::limit($lead->description, 30, '...') }}</td>
-                                                        <td>
-                                                            {{ $lead->start_range }} - {{ $lead->end_range }}
-                                                        </td>
+                                                        @if (general_lead_status($lead->id))
+                                                            <td>{{ $lead->user->name }}
+                                                                <br>
+                                                                {{ $lead->user->email }}
+                                                            </td>
+                                                            <td>{{ $lead->title }} </td>
+
+                                                            <td>{{ Str::limit($lead->description, 30, '...') }}</td>
+                                                            <td>
+                                                                {{ $lead->start_range }} - {{ $lead->end_range }}
+                                                            </td>
+                                                        @else
+                                                            <td>Buy.... </td>
+                                                            <td>Buy.... </td>
+
+                                                            <td>Buy....</td>
+                                                            <td>
+                                                                Buy....
+                                                            </td>
+                                                        @endif
+
+
+
                                                         <td>
                                                             @if ($lead->status == 0)
                                                                 <span class="badge badge-warning">
@@ -152,7 +166,17 @@
                                                             </span>
 
                                                         </td>
+
                                                         <td>
+                                                            @if (!general_lead_status($lead->id))
+                                                                <button type="button" class="btn btn-success buy-btn"
+                                                                    data-id="{{ $lead->id }}">
+                                                                    <i class="fas fa-shopping-bag"></i> Buy Now
+                                                                </button>
+                                                            @endif
+                                                        </td>
+
+                                                        {{-- <td>
 
                                                             <button class="btn btn-primary" data-bs-toggle="modal"
                                                                 data-bs-target="#editUserModal{{ $lead->id }}">
@@ -353,7 +377,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </td>
+                                                        </td> --}}
 
 
                                                     </tr>
@@ -379,11 +403,76 @@
     </div>
 @endsection
 
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('panel/libs/sweetalert2/sweetalert2.min.css') }}">
+@endpush
+@push('scripts')
+    <script src="{{ asset('panel/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.buy-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const leadId = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `You are about to buy the lead. This action cannot be undone.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3ac279',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, Buy Now!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`{{ url('advertiser/leads/general/buy') }}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                            'meta[name="csrf-token"]').getAttribute(
+                                            'content')
+                                    },
+                                    body: JSON.stringify({
+                                        lead_id: leadId
+                                    })
+                                })
+                                .then(response => response.json().then(data => ({
+                                    status: response.status,
+                                    body: data
+                                })))
+                                .then(({
+                                    status,
+                                    body
+                                }) => {
+                                    if (status === 200) {
+                                        Swal.fire('Success!', 'Lead has been bought.',
+                                                'success')
+                                            .then(() => location.reload());
+                                    } else {
+                                        Swal.fire('Error!', body.message ||
+                                            'Something went wrong!', 'error');
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire('Oops...', error.message ||
+                                        'An unexpected error occurred!', 'error');
+                                });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+@endpush
+
 @push('styles')
     <link href="{{ asset('panel/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"
         type="text/css" />
-    <link href="{{ asset('panel/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
+    <link href="{{ asset('panel/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
 @endpush
 
 

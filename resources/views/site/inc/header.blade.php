@@ -121,9 +121,9 @@
 
                     <ul class="header-right">
                         @guest('web')
-                            <li><a wire:navigate href="{{ route('advertiser.login') }}" class="login-btn">User Login</a>
+                            <li><a wire:navigate href="{{ route('login') }}" class="login-btn">User Login</a>
                             </li>
-                            <li><a wire:navigate href="{{ route('advertiser.register') }}" class="register-btn">Register<i
+                            <li><a wire:navigate href="{{ route('register') }}" class="register-btn">Register<i
                                         class="las la-arrow-right"></i></a>
                             </li>
                         @endguest

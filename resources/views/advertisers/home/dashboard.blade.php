@@ -47,9 +47,9 @@
                                         <div class="col-sm-3">
                                             <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
                                                 <div>
-                                                    <p class="text-muted text-truncate mb-2">Total Orders</p>
+                                                    <p class="text-muted text-truncate mb-2">Wallet Balance</p>
                                                     <h5 class="mb-0">
-                                                        0
+                                                        {{ Auth::user()->balance ?? 0 }}
                                                     </h5>
                                                 </div>
                                             </div>

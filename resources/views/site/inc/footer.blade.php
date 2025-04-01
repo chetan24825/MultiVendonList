@@ -6,7 +6,7 @@
             <div class="col-md-12 d-flex justify-content-evenly">
                 <a class="nav-link text-dark" href="{{route('login')}}">Office Login</a>
                 <a class="nav-link text-dark" href="{{route('advertiser.login')}}">Business Login</a>
-                <a class="nav-link text-dark" href="#">List Your Business </a>
+                {{-- <a class="nav-link text-dark" href="#">List Your Business </a> --}}
             </div>
         </div>
 

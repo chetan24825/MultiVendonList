@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Advertiser;
 
 use Carbon\Carbon;
+use App\Models\Inc\Lead;
 use Illuminate\Http\Request;
 use App\Models\Location\City;
 use App\Models\Inc\Technology;
@@ -11,6 +12,8 @@ use App\Models\Payment\Wallet;
 use App\Models\Inc\MessageLead;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Inc\UserLead;
+use App\Models\payment\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -301,6 +304,39 @@ class AdvertiserController extends Controller
     }
 
 
+    function toAdminLeadGeneral(Request $request)
+    {
+        $query = Lead::with('user');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+        }
+
+        // Date Range Filter (Only apply if at least one date is provided)
+        if ($request->filled('start_date') || $request->filled('end_date')) {
+            $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date)->startOfDay() : null;
+            $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay() : now()->endOfDay();
+
+            if ($startDate && $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            } elseif ($startDate) {
+                $query->where('created_at', '>=', $startDate);
+            } else {
+                $query->where('created_at', '<=', $endDate);
+            }
+        }
+
+        $count = $query->count();
+        $leads = $query->orderByDesc('id')->paginate(10);
+
+        $Url = get_setting('custom_slug');
+
+        return view('advertisers.leads.general', compact('leads', 'Url', 'count'));
+    }
+
+
     function toUpdateMessage(Request $request)
     {
         $request->validate([
@@ -336,7 +372,7 @@ class AdvertiserController extends Controller
 
         $leadPrice = get_setting('message_lead');
         $user = Auth::user();
-
+        $oldBalance = $user->balance;
         // Check user balance
         if ($user->balance < $leadPrice) {
             return response()->json([
@@ -355,8 +391,24 @@ class AdvertiserController extends Controller
         }
 
         // Perform balance deduction & update lead status in a transaction
-        DB::transaction(function () use ($user, $lead, $leadPrice) {
+        DB::transaction(function () use ($user, $lead, $leadPrice, $oldBalance) {
             $user->decrement('balance', $leadPrice);
+
+
+            $transaction = new Transaction();
+            $transaction->advertiser_id = $user->id;
+            $transaction->amount = $leadPrice;
+            $transaction->old_balance =  $oldBalance;
+            $transaction->new_balance = $user->balance;
+            $transaction->transaction_id = 'DEB' . now()->format('YmdHis');
+            $transaction->income_type = 'debit';
+            $transaction->details = 'Buy Message Lead ' . $leadPrice;
+            $transaction->lead_type = 'message';
+            $transaction->order_id = $lead->id;
+            $transaction->guard = current_guard();
+            $transaction->save();
+
+
             $lead->update([
                 'lead_amount' => $leadPrice,
                 'payment_status' => 1,
@@ -369,4 +421,123 @@ class AdvertiserController extends Controller
             'lead'    => $lead,
         ]);
     }
+
+
+
+    function tobuygeneral(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            "lead_id" => "required|exists:message_leads,id",
+        ]);
+
+        $leadPrice = get_setting('general_lead');
+        $user = Auth::user();
+
+        // Check if user has sufficient balance
+        if ($user->balance < $leadPrice) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient balance to purchase this lead.',
+            ], 400);
+        }
+
+        // Retrieve the lead
+        $lead = Lead::find($request->lead_id);
+        if (!$lead) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lead not found.',
+            ], 404);
+        }
+
+        // Check if user already bought this lead
+        $existingLead = UserLead::where('advertiser_id', $user->id)
+            ->where('lead_id', $lead->id)
+            ->where('guard', current_guard())
+            ->first();
+
+        if ($existingLead) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already purchased this lead.',
+            ], 400);
+        }
+
+        // Perform balance deduction & store lead transaction within a DB transaction
+        DB::transaction(function () use ($user, $lead, $leadPrice) {
+            $oldBalance = $user->balance;
+
+            // Deduct balance
+            $user->decrement('balance', $leadPrice);
+
+            // Store user lead purchase
+            UserLead::create([
+                'advertiser_id' => $user->id,
+                'guard' => current_guard(),
+                'lead_id' => $lead->id,
+                'lead_amount' => $leadPrice,
+                'payment_status' => 1,
+            ]);
+
+            // Store transaction record
+            Transaction::create([
+                'advertiser_id' => $user->id,
+                'amount' => $leadPrice,
+                'old_balance' => $oldBalance,
+                'new_balance' => $user->fresh()->balance, // Get updated balance
+                'transaction_id' => 'DEB' . now()->format('YmdHis'),
+                'income_type' => 'debit',
+                'details' => 'Purchased General Lead for ' . $leadPrice,
+                'lead_type' => 'general',
+                'order_id' => $lead->id,
+                'guard' => current_guard(),
+            ]);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lead purchased successfully.',
+            'lead' => $lead,
+        ]);
+    }
+
+
+    // public function totransactions(Request $request)
+    // {
+    //     try {
+    //         // Start with the base query
+    //         $query = Transaction::with('user');
+
+    //         // Search Filter
+    //         if ($request->has('search')) {
+    //             $sort = $request->search;
+    //             $query->whereHas('user', function ($q) use ($sort) {
+    //                 $q->where('name', 'like', '%' . $sort . '%')
+    //                   ->orWhere('username', 'like', '%' . $sort . '%')
+    //                   ->orWhere('mobile', 'like', '%' . $sort . '%');
+    //             });
+    //         }
+
+    //         // Date Range Filter
+    //         $startDate = $request->has('start_date') ? $request->start_date : null;
+    //         $endDate = $request->has('end_date') ? $request->end_date : now()->toDateString();
+
+    //         if ($startDate && $endDate) {
+    //             $query->whereBetween('created_at', ["$startDate 00:00:00", "$endDate 23:59:59"]);
+    //         } elseif ($startDate) {
+    //             $query->whereDate('created_at', '>=', $startDate);
+    //         } elseif ($endDate) {
+    //             $query->whereDate('created_at', '<=', $endDate);
+    //         }
+
+    //         // Paginate the results
+    //         $transactions = $query->orderBy('id', 'DESC')->paginate(10);
+
+    //         // Return the view with transactions
+    //         return view('admin.transactions.history', compact('transactions'));
+    //     } catch (\Throwable $th) {
+    //         return $th->getMessage();
+    //     }
+    // }
 }

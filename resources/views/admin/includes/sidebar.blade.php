@@ -87,9 +87,13 @@
 
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="{{ route('admin.payment') }}">
                         <i class="fa fa-th-list"></i>
-                        <span>Payments </span>
+                        <span>Payments
+                            @if (App\Models\Payment\Wallet::where('status',0)->count() > 0)
+                            <span class="right badge badge-danger">{{App\Models\Payment\Wallet::where('status',0)->count()}}</span></span>
+                            @endif
+
                     </a>
 
                 </li>

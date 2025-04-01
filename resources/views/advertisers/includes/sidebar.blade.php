@@ -23,11 +23,16 @@
                 <li>
                     <a href="javascript: void(0);" class="has-arrow ">
                         <i class="fa fa-th-list"></i>
-                        <span>Leads </span>
+                        <span>Leads
+                            @if (App\Models\Inc\MessageLead::where('advertiser_id', Auth::id())->where('payment_status', 0)->count() > 0)
+                                <span class="right badge badge-danger">
+                                    {{ App\Models\Inc\MessageLead::where('advertiser_id', Auth::id())->where('payment_status', 0)->count() }}</span>
+                            @endif
+                        </span>
                     </a>
 
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('admin.leads') }}">
+                        <li><a href="{{ route('advertiser.leads.general') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i>General Leads</a>
                         </li>
 
@@ -51,7 +56,7 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i>Wallet</a>
                         </li>
 
-                        <li><a href="{{route('advertiser.withdraw')}}">
+                        <li><a href="{{ route('advertiser.withdraw') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i>Withdraw</a>
                         </li>
 

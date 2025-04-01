@@ -2,8 +2,9 @@
 
 use Otpless\OTPLessAuth;
 use App\Models\Inc\Upload;
-use App\Models\Inc\BusinessSetting;
+use App\Models\Inc\UserLead;
 use App\Models\Inc\Technology;
+use App\Models\Inc\BusinessSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -177,5 +178,14 @@ if (!function_exists('technology_name')) {
         $technology = Technology::whereIn('id', json_decode($data, true))->pluck('name');
         $technologyNames = $technology->implode(', ');
         return $technologyNames;
+    }
+}
+
+
+if (!function_exists('general_lead_status')) {
+    function general_lead_status($id)
+    {
+        $userLead = UserLead::where('lead_id', $id)->where('advertiser_id', Auth::user()->id)->where('guard', current_guard())->first();
+        return $userLead;
     }
 }

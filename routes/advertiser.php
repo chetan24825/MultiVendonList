@@ -44,10 +44,15 @@ Route::group(['middleware' => ['auth:advertiser', 'user.active', 'profile.regist
     Route::post('leads/messages/buy', [AdvertiserController::class, 'tobuyMessage'])->name('leads.buy.message');
 
 
+    //Advertiser
+    Route::get('/leads/general', [AdvertiserController::class, 'toAdminLeadGeneral'])->name('leads.general');
+    Route::post('leads/general/buy', [AdvertiserController::class, 'tobuygeneral'])->name('leads.buy.general');
     //AJax
     Route::get('/products/cities', [LocationController::class, 'getCitiesByState'])->name('getCitiesByState');
 
 
+    //Transactions
+    Route::get('/transactions', [AdvertiserController::class, 'totransactions'])->name('transactions');
 
     // AizUpload
     Route::post('/aiz-uploader', [AizUploadController::class, 'show_uploader']);

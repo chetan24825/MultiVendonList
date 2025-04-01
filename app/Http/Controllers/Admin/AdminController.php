@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Advertiser;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Payment\Wallet;
 use App\Models\Inc\CustomPages;
 use Illuminate\Support\Facades\DB;
 use App\Models\Inc\BusinessSetting;
@@ -224,5 +225,75 @@ class AdminController extends Controller
             return back()->withErrors('There was a problem uploading the data!');
         }
         return  redirect()->back()->with('success', 'Plumber Upload Successfully');
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // -------------------------------------------Payments--------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------
+
+    public function topayment(Request $request)
+    {
+        try {
+            $query = Wallet::with('advertiser');
+            if ($request->has('search')) {
+                $sort = $request->search;
+
+                $query->whereHas('advertiser', function ($q) use ($sort) {
+                    $q->where('company_name', 'like', '%' . $sort . '%')
+                        ->orWhere('first_name', 'like', '%' . $sort . '%')
+                        ->orWhere('last_name', 'like', '%' . $sort . '%')
+                        ->orWhere('phone', 'like', '%' . $sort . '%');
+                });
+            }
+
+            $wallet_transaction = $query->paginate(10);
+            return view('admin.payments.payment', compact('wallet_transaction'));
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $th->getMessage());
+        }
+    }
+
+
+    function topaymentapproved(Request $request)
+    {
+        try {
+
+            $validated = $request->validate([
+                'id' => 'required|exists:wallets,id', // Ensure product exists in the products table
+                'status' => 'required|in:1,2', // Ensure status is either 1 or 2
+            ]);
+
+            $wallet = Wallet::find($request->id);
+            $wallet->status = $request->status;
+            $wallet->save();
+
+            $user = Advertiser::find($wallet->user_id);
+
+            $user->balance += $wallet->amount;
+            $user->save();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->validator->errors()], 422);
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $th->getMessage());
+        }
+    }
+
+    function topaymentrejected(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'id' => 'required|exists:wallets,id', // Ensure product exists in the products table
+                'status' => 'required|in:1,2', // Ensure status is either 1 or 2
+
+            ]);
+            $wallet = Wallet::find($request->id);
+            $wallet->status = $request->status;
+            $wallet->save();
+            return response()->json(['success' => 'Payment Rejected Successfully']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->validator->errors()], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()]);
+        }
     }
 }

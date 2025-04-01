@@ -72,9 +72,9 @@
 
                         <ul class="header-right">
 
-                            <li><a href="#" class="login-btn">Log in</a></li>
+                            <li><a :href="route('login')" class="login-btn">Log in</a></li>
 
-                            <li><a href="#" class="register-btn">Register<i class="las la-arrow-right"></i></a></li>
+                            <li><a :href="route('register')" class="register-btn">Register<i class="las la-arrow-right"></i></a></li>
                         </ul>
 
                     </div>

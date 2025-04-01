@@ -58,6 +58,14 @@ Route::group(['middleware' => ['auth:admin', 'user.active']], function () {
     Route::get('/settings', [AdminController::class, 'toSettings'])->name('settings');
     Route::post('/settings', [AdminController::class, 'toSettingUpload']);
 
+
+    //Payment
+    Route::get('/payment', [AdminController::class, 'topayment'])->name('payment');
+    Route::post('/payment/approved', [AdminController::class, 'topaymentapproved'])->name('payment.approved');
+    Route::post('/payment/rejected', [AdminController::class, 'topaymentrejected'])->name('payment.rejected');
+
+
+
     // Custom Pages
     Route::get('/custom-pages', [AdminController::class, 'toCustom'])->name('custom-page-all');
     Route::get('/custom-pages/create', [AdminController::class, 'toCustomPage'])->name('custom-page');
